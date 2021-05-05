@@ -1,19 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import AuthContextProvider from './src/context/authContext';
+import MainNavigation from './src/navigation/mainNavigation';
 
-export default function App() {
+export default function App(): React.ReactNode {
   return (
-    <View style={styles.container}>
-      <Text>Prio App</Text>
-    </View>
+    <AuthContextProvider>
+      <MainNavigation />
+    </AuthContextProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

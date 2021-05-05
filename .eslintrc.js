@@ -1,4 +1,5 @@
-export default {
+/* eslint-disable no-undef */
+module.exports = {
   env: {
     browser: true,
     es2021: true,
@@ -17,5 +18,14 @@ export default {
     sourceType: 'module',
   },
   plugins: ['react', 'react-native', '@typescript-eslint'],
-  rules: {},
 };
+
+/* module.exports = {
+  root: true,
+  extends: ['@react-native-community', 'plugin:@typescript-eslint/recommended'],
+  parser: '@typescript-eslint/parser',
+  plugins: ['react-native', '@typescript-eslint'],
+  rules: {
+    'prettier/prettier': ['error', { singleQuote: true }],
+  },
+}; */
