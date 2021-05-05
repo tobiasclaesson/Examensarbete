@@ -5,7 +5,7 @@ import colors from '../utils/colors';
 
 interface IProps {
   title: string;
-  onPress: () => void;
+  onPress: () => void | void;
 }
 
 const Button: FC<IProps> = (props: IProps) => {

@@ -34,7 +34,7 @@ const AuthContextProvider: FC<IProps> = (props) => {
   }, []);
 
   const checkUserRole = async () => {
-    const snapshot = await db.collection('Admins').get();
+    const snapshot = await db.collection('admins').get();
 
     if (snapshot) {
       snapshot.forEach((doc) => {
