@@ -23,10 +23,12 @@ const SignupScreen: FC<IProps> = (props) => {
     <View style={styles.container}>
       <TextInputField
         placeholder='Email'
+        value={email}
         onChangeText={(text) => setEmail(text)}
       />
       <TextInputField
         placeholder='Password'
+        value={password}
         onChangeText={(text) => setPassword(text)}
         secureTextEntry={true}
       />

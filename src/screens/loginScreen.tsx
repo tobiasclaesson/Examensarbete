@@ -23,11 +23,13 @@ const LoginScreen: FC<IProps> = (props: IProps) => {
     <View style={styles.container}>
       <TextInputField
         placeholder='Email'
+        value={email}
         onChangeText={(text) => setEmail(text)}
         keyboardType={'email-address'}
       />
       <TextInputField
         placeholder='Password'
+        value={password}
         onChangeText={(text) => setPassword(text)}
         secureTextEntry={true}
       />

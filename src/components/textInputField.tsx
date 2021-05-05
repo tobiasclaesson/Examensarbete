@@ -4,15 +4,17 @@ import colors from '../utils/colors';
 
 interface IProps {
   placeholder: string;
+  value: string;
   onChangeText: (text: string) => void;
   secureTextEntry?: boolean;
   keyboardType?: 'email-address';
   shouldAutoFocus?: boolean;
 }
 
-const TextInputField: FC<IProps> = (props) => {
+const TextInputField: FC<IProps> = (props: IProps) => {
   const {
     placeholder,
+    value,
     onChangeText,
     secureTextEntry,
     keyboardType,
@@ -24,6 +26,7 @@ const TextInputField: FC<IProps> = (props) => {
       <TextInput
         style={styles.textInput}
         placeholder={placeholder}
+        value={value}
         onChangeText={(text) => onChangeText(text)}
         secureTextEntry={secureTextEntry || false}
         keyboardType={keyboardType || 'default'}

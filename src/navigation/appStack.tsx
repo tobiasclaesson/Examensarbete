@@ -1,10 +1,11 @@
 import React, { FC } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { MainScreen } from '../screens';
+import { MainScreen, CreatePollScreen } from '../screens';
 import colors from '../utils/colors';
 
 export type AppStackParamList = {
   MainScreen: undefined;
+  CreatePollScreen: undefined;
 };
 
 const Stack = createStackNavigator<AppStackParamList>();
@@ -23,6 +24,13 @@ const AppStack: FC = () => {
         component={MainScreen}
         options={{
           title: 'StSo Prio',
+        }}
+      />
+      <Stack.Screen
+        name='CreatePollScreen'
+        component={CreatePollScreen}
+        options={{
+          title: 'Create Poll',
         }}
       />
     </Stack.Navigator>

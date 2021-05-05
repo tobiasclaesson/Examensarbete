@@ -1,6 +1,5 @@
 import React, { FC, useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-
 import { AppStackParamList } from '../navigation/appStack';
 import { StackNavigationProp } from '@react-navigation/stack';
 import colors from '../utils/colors';
@@ -8,7 +7,6 @@ import { AuthContext } from '../context/authContext';
 import { Button } from '../components';
 import SplashScreen from './splashScreen';
 import { DBContext } from '../context/dbContext';
-import { IPoll } from '../utils/types';
 import { useSelector } from 'react-redux';
 import { ReducerState } from '../store';
 
@@ -25,7 +23,7 @@ const MainScreen: FC<IProps> = (props: IProps) => {
   const { navigation } = props;
 
   const { userIsAdmin, isLoading, signOut } = useContext(AuthContext);
-  const { addPoll, getPoll, pollIsLoading } = useContext(DBContext);
+  const { getPoll, pollIsLoading } = useContext(DBContext);
 
   const { poll } = useSelector((state: ReducerState) => state.pollReducer);
 
@@ -44,14 +42,7 @@ const MainScreen: FC<IProps> = (props: IProps) => {
       {userIsAdmin && (
         <Button
           title='Create Poll'
-          onPress={() =>
-            addPoll({
-              title: '103',
-              options: [],
-              usersHaveVoted: [],
-              answers: [],
-            })
-          }
+          onPress={() => navigation.navigate('CreatePollScreen')}
         />
       )}
       <Text style={{ color: colors.black }}>{poll.title}</Text>
