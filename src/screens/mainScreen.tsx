@@ -40,10 +40,12 @@ const MainScreen: FC<IProps> = (props: IProps) => {
   return (
     <View style={styles.container}>
       {userIsAdmin && (
-        <Button
-          title='Create Poll'
-          onPress={() => navigation.navigate('CreatePollScreen')}
-        />
+        <View style={styles.buttonContainer}>
+          <Button
+            title='Create Poll'
+            onPress={() => navigation.navigate('CreatePollScreen')}
+          />
+        </View>
       )}
       <Text style={{ color: colors.black }}>{poll.title}</Text>
       <Button title='Sign Out' onPress={signOut} />
@@ -56,6 +58,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
+    width: '100%',
+    backgroundColor: 'brown',
+  },
+  buttonContainer: {
+    paddingVertical: 10,
+    width: '60%',
+
+    paddingBottom: 30,
   },
 });
 
