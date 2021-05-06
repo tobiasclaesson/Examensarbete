@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Verdana',
     fontSize: 24,
 
-    padding: 30,
+    padding: 50,
   },
 });
 
