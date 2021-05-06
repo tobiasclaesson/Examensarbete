@@ -2,6 +2,8 @@ import React, { FC } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { MainScreen, CreatePollScreen } from '../screens';
 import colors from '../utils/colors';
+import { Button } from '../components';
+import SignOutButton from '../components/signOutButton';
 
 export type AppStackParamList = {
   MainScreen: undefined;
@@ -11,8 +13,10 @@ export type AppStackParamList = {
 const Stack = createStackNavigator<AppStackParamList>();
 
 const screenOptions = {
-  headerTintColor: colors.black,
-
+  headerTintColor: colors.white,
+  headerStyle: {
+    backgroundColor: colors.brandBlue,
+  },
   headerBackTitle: 'Back',
 };
 
@@ -24,6 +28,7 @@ const AppStack: FC = () => {
         component={MainScreen}
         options={{
           title: 'StSo Prio',
+          headerLeft: (props) => <SignOutButton {...props} />,
         }}
       />
       <Stack.Screen

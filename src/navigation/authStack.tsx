@@ -9,7 +9,10 @@ export type AuthStackParamList = {
 };
 
 const screenOptions = {
-  headerTintColor: colors.black,
+  headerTintColor: colors.white,
+  headerStyle: {
+    backgroundColor: colors.brandBlue,
+  },
   headerBackTitle: 'Back',
 };
 
