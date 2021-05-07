@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.black,
+    backgroundColor: colors.brandBlue,
   },
   text: {
     padding: 15,

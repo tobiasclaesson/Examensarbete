@@ -2,7 +2,6 @@ import React, { FC } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { MainScreen, CreatePollScreen } from '../screens';
 import colors from '../utils/colors';
-import { Button } from '../components';
 import SignOutButton from '../components/signOutButton';
 
 export type AppStackParamList = {
@@ -28,7 +27,7 @@ const AppStack: FC = () => {
         component={MainScreen}
         options={{
           title: 'StSo Prio',
-          // eslint-disable-next-line react/display-name
+
           headerLeft: (props) => <SignOutButton {...props} />,
         }}
       />
