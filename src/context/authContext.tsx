@@ -10,14 +10,17 @@ const initialState = {
   user: auth.currentUser,
   userIsAdmin: false,
   isLoading: true,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   signIn: (email: string, password: string) => {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   signOut: () => {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   signUp: (email: string, password: string) => {},
 };
 
 export const AuthContext = createContext(initialState);
 
-const AuthContextProvider: FC<IProps> = (props) => {
+const AuthContextProvider: FC<IProps> = (props: IProps) => {
   const { children } = props;
 
   const [user, setUser] = useState<firebase.User | null>(null);
