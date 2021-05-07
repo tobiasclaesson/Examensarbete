@@ -17,7 +17,9 @@ const pollInitialState: IPoll = {
 
 const initialState = {
   pollIsLoading: false,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   getPoll: () => {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   addPoll: (poll: IPoll, closure?: (() => void) | undefined) => {},
 };
 
