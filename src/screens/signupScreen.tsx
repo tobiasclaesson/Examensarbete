@@ -4,6 +4,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../navigation/authStack';
 import { TextInputField, Button } from '../components';
 import { AuthContext } from '../context/authContext';
+import colors from '../utils/colors';
 
 type SignupScreenNavigationProp = StackNavigationProp<
   AuthStackParamList,
@@ -53,6 +54,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: colors.lightGrey,
   },
   buttonContainer: {
     flexDirection: 'row',

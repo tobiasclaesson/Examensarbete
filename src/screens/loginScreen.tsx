@@ -4,6 +4,7 @@ import { TextInputField, Button } from '../components';
 import { AuthContext } from '../context/authContext';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../navigation/authStack';
+import colors from '../utils/colors';
 
 type LoginScreenNavigationProp = StackNavigationProp<
   AuthStackParamList,
@@ -59,6 +60,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: colors.lightGrey,
   },
   buttonContainer: {
     flexDirection: 'row',

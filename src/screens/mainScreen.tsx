@@ -47,8 +47,6 @@ const MainScreen: FC<IProps> = (props: IProps) => {
           />
         </View>
       )}
-      <Text style={{ color: colors.black }}>{poll.title}</Text>
-      <Button title='Sign Out' onPress={signOut} />
     </View>
   );
 };
@@ -59,12 +57,13 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     width: '100%',
-    backgroundColor: 'brown',
+    height: '100%',
+    backgroundColor: colors.lightGrey,
   },
   buttonContainer: {
     paddingVertical: 10,
-    width: '60%',
-
+    width: '80%',
+    flex: 1,
     paddingBottom: 30,
   },
 });
