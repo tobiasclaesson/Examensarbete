@@ -37,6 +37,7 @@ const DBContextProvider: FC = (props: PropTypes) => {
 
     if (doc) {
       const activePoll = {
+        id: doc.id,
         title: doc.data()?.title,
         options: doc.data()?.options,
         usersHaveVoted: doc.data()?.usersHaveVoted,

@@ -1,5 +1,5 @@
 import React, { FC, useContext, useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { AppStackParamList } from '../navigation/appStack';
 import { StackNavigationProp } from '@react-navigation/stack';
 import colors from '../utils/colors';
@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 import { ReducerState } from '../store';
 import { ScrollView } from 'react-native-gesture-handler';
 import { strings } from '../utils/strings';
+import { POLL_LIST_ITEM_HEIGHT } from '../utils/constants';
 
 type MainScreenNavigationProp = StackNavigationProp<
   AppStackParamList,
@@ -33,6 +34,8 @@ const MainScreen: FC<IProps> = (props: IProps) => {
     getPoll();
   }, []);
 
+  console.log(poll.options);
+
   if (isLoading) {
     console.log('Returning Splash');
 
@@ -45,7 +48,13 @@ const MainScreen: FC<IProps> = (props: IProps) => {
       <Text>{strings.mainScreenUnorderedListDesc.eng}</Text>
 
       <View style={styles.scrollViewContainer}>
-        <ScrollView style={styles.scrollView}></ScrollView>
+        <FlatList
+          data={poll.options}
+          renderItem={({ item, index }) => (
+            <PollListItem title={item.title} isText={true} i={index} />
+          )}
+          keyExtractor={(item, index) => index.toString()}
+        />
       </View>
       {userIsAdmin && (
         <View style={styles.buttonContainer}>

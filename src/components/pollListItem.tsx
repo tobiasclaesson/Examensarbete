@@ -1,29 +1,36 @@
 import React, { FC } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import colors from '../utils/colors';
+import { POLL_LIST_ITEM_HEIGHT } from '../utils/constants';
 
 interface IProps {
   title: string;
-  onChangeText: (text: string) => void;
+  onChangeText?(text: string): void;
+  isText: boolean;
+  i?: number;
 }
 
 const PollListItem: FC<IProps> = (props: IProps) => {
-  const { title, onChangeText } = props;
+  const { title, onChangeText, isText, i } = props;
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.textInput}
-        placeholder='feature title'
-        placeholderTextColor={colors.grey}
-        value={title}
-        onChangeText={(text) => onChangeText(text)}
-        keyboardType='default'
-        autoCompleteType='off'
-        autoCorrect={false}
-        autoFocus={true}
-      />
+      {isText ? (
+        <Text style={styles.text}>{`${i ? i + 1 : 1}. ${title}`}</Text>
+      ) : (
+        <TextInput
+          style={styles.text}
+          placeholder='feature title'
+          placeholderTextColor={colors.grey}
+          value={title}
+          onChangeText={onChangeText}
+          keyboardType='default'
+          autoCompleteType='off'
+          autoCorrect={false}
+          autoFocus={true}
+        />
+      )}
     </View>
   );
 };
@@ -37,11 +44,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.brandBlueDark,
+    height: POLL_LIST_ITEM_HEIGHT,
   },
-  textInput: {
-    padding: 10,
-    paddingVertical: 15,
-
+  text: {
     color: colors.white,
     width: '90%',
   },

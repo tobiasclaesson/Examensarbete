@@ -1,14 +1,9 @@
 import * as ActionTypes from './actions';
 import { PollActionTypes } from './actions';
-import { IAnswers } from '../utils/types';
+import { IPoll } from '../utils/types';
 
 export interface IPollState {
-  poll: {
-    title: string;
-    options: string[];
-    usersHaveVoted: number[];
-    answers: IAnswers[];
-  };
+  poll: IPoll;
 }
 
 const initialState: IPollState = {

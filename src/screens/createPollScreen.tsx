@@ -6,7 +6,7 @@ import colors from '../utils/colors';
 
 import { Button, PollListItem, TextInputField } from '../components';
 import { DBContext } from '../context/dbContext';
-import { IPoll } from '../utils/types';
+import { IOption, IPoll } from '../utils/types';
 import { ScrollView } from 'react-native-gesture-handler';
 import { updatePoll } from '../store/actions';
 import { checkArrayForDuplicates } from '../utils/common';
@@ -27,18 +27,16 @@ const MainScreen: FC<IProps> = (props: IProps) => {
   const { addPoll } = useContext(DBContext);
 
   const [title, setTitle] = useState<string>('');
-  const [options, setOptions] = useState<string[]>([]);
-
-  console.log(options);
+  const [options, setOptions] = useState<IOption[]>([]);
 
   const addOption = () => {
-    setOptions([...options, '']);
+    setOptions([...options, { title: '' }]);
   };
   const setOption = (text: string, optionIndex: number) => {
     setOptions((prevState) => {
       const opt = prevState.map((option, i) => {
         if (optionIndex === i) {
-          return text;
+          return { title: text };
         } else {
           return option;
         }
@@ -81,7 +79,7 @@ const MainScreen: FC<IProps> = (props: IProps) => {
     }
     let optionTitleEmpty = false;
     options.forEach((option) => {
-      if (option === '') {
+      if (option.title === '') {
         optionTitleEmpty = true;
       }
     });
@@ -112,8 +110,9 @@ const MainScreen: FC<IProps> = (props: IProps) => {
           {options.map((option, i) => (
             <PollListItem
               key={i}
-              title={option}
+              title={option.title}
               onChangeText={(text) => setOption(text, i)}
+              isText={false}
             />
           ))}
         </ScrollView>
