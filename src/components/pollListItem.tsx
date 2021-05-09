@@ -17,7 +17,7 @@ const PollListItem: FC<IProps> = (props: IProps) => {
   return (
     <View style={styles.container}>
       {isText ? (
-        <Text style={styles.text}>{`${i ? i + 1 : 1}. ${title}`}</Text>
+        <Text style={styles.text}>{`${title}`}</Text>
       ) : (
         <TextInput
           style={styles.text}

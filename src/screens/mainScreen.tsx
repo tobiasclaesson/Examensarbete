@@ -1,12 +1,5 @@
-import React, { FC, useContext, useEffect, useRef, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  PanResponder,
-  Animated,
-} from 'react-native';
+import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { AppStackParamList } from '../navigation/appStack';
 import { StackNavigationProp } from '@react-navigation/stack';
 import colors from '../utils/colors';
@@ -14,13 +7,15 @@ import { AuthContext } from '../context/authContext';
 import { Button, PollListItem } from '../components';
 import SplashScreen from './splashScreen';
 import { DBContext } from '../context/dbContext';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { ReducerState } from '../store';
-import { ScrollView } from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { strings } from '../utils/strings';
-import { POLL_LIST_ITEM_HEIGHT } from '../utils/constants';
-import PollFlatlist from '../components/pollFlatlist';
-import DraggablePollListItem from '../components/draggablePollListItem';
+import DraggableFlatList, {
+  RenderItemParams,
+} from 'react-native-draggable-flatlist';
+import { IOption } from '../utils/types';
+import * as Actions from '../store/actions';
 
 type MainScreenNavigationProp = StackNavigationProp<
   AppStackParamList,
@@ -34,17 +29,27 @@ interface IProps {
 const MainScreen: FC<IProps> = (props: IProps) => {
   const { navigation } = props;
 
-  const { userIsAdmin, isLoading, signOut } = useContext(AuthContext);
-  const { getPoll, pollIsLoading } = useContext(DBContext);
+  const { userIsAdmin, isLoading } = useContext(AuthContext);
+  const { getPoll, pollIsLoading, addAnswer } = useContext(DBContext);
+  const dispatch = useDispatch();
 
   const { poll } = useSelector((state: ReducerState) => state.pollReducer);
-  const positions = useRef(listToObject(poll.options)).current;
+
+  const [usersOptionOrder, setUsersOptionsOrder] = useState<IOption[]>(
+    poll.options
+  );
+
+  console.log(usersOptionOrder);
+
+  useEffect(() => {
+    setUsersOptionsOrder(poll.options);
+  }, [poll]);
 
   useEffect(() => {
     getPoll();
   }, []);
 
-  function listToObject(list: any) {
+  /* function listToObject(list: any) {
     const values = Object.values(list);
     const object = {};
 
@@ -54,7 +59,21 @@ const MainScreen: FC<IProps> = (props: IProps) => {
     console.log(object);
 
     return object;
-  }
+  } */
+
+  type Item = {
+    title: string;
+  };
+  const renderItem = useCallback(
+    ({ item, index, drag }: RenderItemParams<Item>) => {
+      return (
+        <TouchableOpacity onPress={drag}>
+          <PollListItem title={item.title} isText={true} i={index} />
+        </TouchableOpacity>
+      );
+    },
+    []
+  );
 
   if (isLoading) return <SplashScreen />;
   if (pollIsLoading) return <SplashScreen />;
@@ -66,32 +85,29 @@ const MainScreen: FC<IProps> = (props: IProps) => {
       </View>
 
       <View style={styles.scrollViewContainer}>
-        <ScrollView
-          contentContainerStyle={{
-            height: poll.options.length * POLL_LIST_ITEM_HEIGHT,
-          }}
-        >
-          {poll.options.map((option, i) => (
-            <DraggablePollListItem
-              title={option.title}
-              positions={positions}
-              id={i}
-            />
-          ))}
-        </ScrollView>
+        <DraggableFlatList
+          data={usersOptionOrder}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.title}
+          onDragEnd={({ data }) =>
+            dispatch(Actions.updatePoll({ ...poll, options: data }))
+          }
+        />
       </View>
-      {userIsAdmin && (
-        <View style={styles.buttonContainer}>
+
+      <View style={styles.buttonContainer}>
+        {userIsAdmin && (
           <Button
             title={strings.mainScreenCreatePollButton.eng}
             onPress={() => navigation.navigate('CreatePollScreen')}
           />
-          <Button
-            title={strings.mainScreenSubmitButton.eng}
-            onPress={() => navigation.navigate('CreatePollScreen')}
-          />
-        </View>
-      )}
+        )}
+
+        <Button
+          title={strings.mainScreenSubmitButton.eng}
+          onPress={() => addAnswer(usersOptionOrder)}
+        />
+      </View>
     </View>
   );
 };
@@ -106,7 +122,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightGrey,
   },
   header: {
-    backgroundColor: 'yellow',
     flex: 1,
   },
   scrollViewContainer: {
@@ -122,7 +137,6 @@ const styles = StyleSheet.create({
     width: '80%',
     flex: 2,
     paddingBottom: 30,
-    backgroundColor: 'yellow',
   },
 });
 
