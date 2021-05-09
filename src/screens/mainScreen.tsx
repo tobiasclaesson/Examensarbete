@@ -1,5 +1,12 @@
-import React, { FC, useContext, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import React, { FC, useContext, useEffect, useRef, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  PanResponder,
+  Animated,
+} from 'react-native';
 import { AppStackParamList } from '../navigation/appStack';
 import { StackNavigationProp } from '@react-navigation/stack';
 import colors from '../utils/colors';
@@ -12,6 +19,8 @@ import { ReducerState } from '../store';
 import { ScrollView } from 'react-native-gesture-handler';
 import { strings } from '../utils/strings';
 import { POLL_LIST_ITEM_HEIGHT } from '../utils/constants';
+import PollFlatlist from '../components/pollFlatlist';
+import DraggablePollListItem from '../components/draggablePollListItem';
 
 type MainScreenNavigationProp = StackNavigationProp<
   AppStackParamList,
@@ -29,32 +38,47 @@ const MainScreen: FC<IProps> = (props: IProps) => {
   const { getPoll, pollIsLoading } = useContext(DBContext);
 
   const { poll } = useSelector((state: ReducerState) => state.pollReducer);
+  const positions = useRef(listToObject(poll.options)).current;
 
   useEffect(() => {
     getPoll();
   }, []);
 
-  console.log(poll.options);
+  function listToObject(list: any) {
+    const values = Object.values(list);
+    const object = {};
 
-  if (isLoading) {
-    console.log('Returning Splash');
+    for (let i = 0; i < values.length; i++) {
+      object[values[i].id] = i;
+    }
+    console.log(object);
 
-    return <SplashScreen />;
+    return object;
   }
+
+  if (isLoading) return <SplashScreen />;
   if (pollIsLoading) return <SplashScreen />;
   return (
     <View style={styles.container}>
-      <Text>{poll.title}</Text>
-      <Text>{strings.mainScreenUnorderedListDesc.eng}</Text>
+      <View style={styles.header}>
+        <Text>{poll.title}</Text>
+        <Text>{strings.mainScreenUnorderedListDesc.eng}</Text>
+      </View>
 
       <View style={styles.scrollViewContainer}>
-        <FlatList
-          data={poll.options}
-          renderItem={({ item, index }) => (
-            <PollListItem title={item.title} isText={true} i={index} />
-          )}
-          keyExtractor={(item, index) => index.toString()}
-        />
+        <ScrollView
+          contentContainerStyle={{
+            height: poll.options.length * POLL_LIST_ITEM_HEIGHT,
+          }}
+        >
+          {poll.options.map((option, i) => (
+            <DraggablePollListItem
+              title={option.title}
+              positions={positions}
+              id={i}
+            />
+          ))}
+        </ScrollView>
       </View>
       {userIsAdmin && (
         <View style={styles.buttonContainer}>
@@ -81,10 +105,14 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: colors.lightGrey,
   },
+  header: {
+    backgroundColor: 'yellow',
+    flex: 1,
+  },
   scrollViewContainer: {
     paddingTop: 10,
     width: '90%',
-    height: '65%',
+    flex: 6,
   },
   scrollView: {
     flex: 1,
@@ -92,8 +120,9 @@ const styles = StyleSheet.create({
   buttonContainer: {
     paddingVertical: 10,
     width: '80%',
-    flex: 1,
+    flex: 2,
     paddingBottom: 30,
+    backgroundColor: 'yellow',
   },
 });
 
