@@ -5,6 +5,7 @@ import { AuthStackParamList } from '../navigation/authStack';
 import { TextInputField, Button } from '../components';
 import { AuthContext } from '../context/authContext';
 import colors from '../utils/colors';
+import { strings } from '../utils/strings';
 
 type SignupScreenNavigationProp = StackNavigationProp<
   AuthStackParamList,
@@ -35,11 +36,11 @@ const SignupScreen: FC<IProps> = (props) => {
       />
       <View style={styles.buttonContainer}>
         <Button
-          title='Cancel'
+          title={strings.signupScreenCancelButton.eng}
           onPress={() => props.navigation.navigate('Login')}
         />
         <Button
-          title='Sign up'
+          title={strings.signupScreenSignUpButton.eng}
           onPress={() => {
             signUp(email, password);
           }}

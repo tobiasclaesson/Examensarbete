@@ -5,6 +5,7 @@ import { AuthContext } from '../context/authContext';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../navigation/authStack';
 import colors from '../utils/colors';
+import { strings } from '../utils/strings';
 
 type LoginScreenNavigationProp = StackNavigationProp<
   AuthStackParamList,
@@ -36,11 +37,11 @@ const LoginScreen: FC<IProps> = (props: IProps) => {
       />
       <View style={styles.buttonContainer}>
         <Button
-          title='Sign Up'
+          title={strings.loginScreenSignUpButton.eng}
           onPress={() => props.navigation.navigate('Signup')}
         />
         <Button
-          title='Sign In'
+          title={strings.loginScreenSignInButton.eng}
           onPress={() => {
             signIn(email, password);
           }}

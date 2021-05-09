@@ -10,6 +10,7 @@ import { IPoll } from '../utils/types';
 import { ScrollView } from 'react-native-gesture-handler';
 import { updatePoll } from '../store/actions';
 import { checkArrayForDuplicates } from '../utils/common';
+import { strings } from '../utils/strings';
 
 type CreatePollNavigationProp = StackNavigationProp<
   AppStackParamList,
@@ -47,25 +48,23 @@ const MainScreen: FC<IProps> = (props: IProps) => {
   };
 
   enum EAlertTypes {
-    Title = 'TITLE',
-    MissingOptions = 'MISSING_OPTIONS',
-    DuplicateOptions = 'DUPLICATE_OPTIONS',
+    Title,
+    MissingOptions,
+    DuplicateOptions,
   }
-  const createAlert = (type: string) => {
+  const createAlert = (type: EAlertTypes) => {
     let msg = '';
     switch (type) {
       case EAlertTypes.Title: {
-        msg = 'There are empty titles, please correct before updating poll';
+        msg = strings.createPollScreenAlertTypeTitleMsg.eng;
         break;
       }
       case EAlertTypes.MissingOptions: {
-        msg =
-          'There are to few options, please add options before updating poll';
+        msg = strings.createPollScreenAlertTypeMissingOptionMsg.eng;
         break;
       }
       case EAlertTypes.DuplicateOptions: {
-        msg =
-          'There is a duplicate in options, please correct before updating poll';
+        msg = strings.createPollScreenAlertTypeDuplicateMsg.eng;
         break;
       }
     }
@@ -120,8 +119,14 @@ const MainScreen: FC<IProps> = (props: IProps) => {
         </ScrollView>
       </View>
       <View style={styles.buttonsContainer}>
-        <Button title='Add option' onPress={() => addOption()} />
-        <Button title='Create and Replace Poll' onPress={() => updatePoll()} />
+        <Button
+          title={strings.createPollScreenAddOptionButton.eng}
+          onPress={() => addOption()}
+        />
+        <Button
+          title={strings.createPollScreenUpdatePollButton.eng}
+          onPress={() => updatePoll()}
+        />
       </View>
     </View>
   );

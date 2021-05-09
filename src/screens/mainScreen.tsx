@@ -4,11 +4,13 @@ import { AppStackParamList } from '../navigation/appStack';
 import { StackNavigationProp } from '@react-navigation/stack';
 import colors from '../utils/colors';
 import { AuthContext } from '../context/authContext';
-import { Button } from '../components';
+import { Button, PollListItem } from '../components';
 import SplashScreen from './splashScreen';
 import { DBContext } from '../context/dbContext';
 import { useSelector } from 'react-redux';
 import { ReducerState } from '../store';
+import { ScrollView } from 'react-native-gesture-handler';
+import { strings } from '../utils/strings';
 
 type MainScreenNavigationProp = StackNavigationProp<
   AppStackParamList,
@@ -39,10 +41,20 @@ const MainScreen: FC<IProps> = (props: IProps) => {
   if (pollIsLoading) return <SplashScreen />;
   return (
     <View style={styles.container}>
+      <Text>{poll.title}</Text>
+      <Text>{strings.mainScreenUnorderedListDesc.eng}</Text>
+
+      <View style={styles.scrollViewContainer}>
+        <ScrollView style={styles.scrollView}></ScrollView>
+      </View>
       {userIsAdmin && (
         <View style={styles.buttonContainer}>
           <Button
-            title='Create Poll'
+            title={strings.mainScreenCreatePollButton.eng}
+            onPress={() => navigation.navigate('CreatePollScreen')}
+          />
+          <Button
+            title={strings.mainScreenSubmitButton.eng}
             onPress={() => navigation.navigate('CreatePollScreen')}
           />
         </View>
@@ -59,6 +71,14 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     backgroundColor: colors.lightGrey,
+  },
+  scrollViewContainer: {
+    paddingTop: 10,
+    width: '90%',
+    height: '65%',
+  },
+  scrollView: {
+    flex: 1,
   },
   buttonContainer: {
     paddingVertical: 10,
