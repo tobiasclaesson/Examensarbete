@@ -95,11 +95,13 @@ const MainScreen: FC<IProps> = (props: IProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text>{poll.title}</Text>
-        <Text>{strings.mainScreenUnorderedListDesc.eng}</Text>
+        <Text style={styles.headerText}>{poll.title}</Text>
       </View>
 
       <View style={styles.scrollViewContainer}>
+        <Text style={styles.descText}>
+          {strings.mainScreenUnorderedListDesc.eng}
+        </Text>
         <DraggableFlatList
           data={usersOptionOrder}
           renderItem={renderItem}
@@ -141,7 +143,19 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightGrey,
   },
   header: {
+    justifyContent: 'center',
+    alignItems: 'center',
     flex: 1,
+  },
+  headerText: {
+    color: colors.black,
+    fontSize: 34,
+  },
+  descText: {
+    color: colors.black,
+    fontSize: 18,
+    alignSelf: 'center',
+    overflow: 'visible',
   },
   scrollViewContainer: {
     paddingTop: 10,
