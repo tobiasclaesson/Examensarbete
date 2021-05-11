@@ -8,6 +8,9 @@ import allReducers from './src/store';
 
 export const store = createStore(allReducers);
 
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Calling getNode()']);
+
 export default function App(): React.ReactNode {
   return (
     <Provider store={store}>
