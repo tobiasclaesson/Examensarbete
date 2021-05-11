@@ -2,7 +2,8 @@ export interface IPoll {
   id?: string;
   title: string;
   options: IOption[];
-  usersHaveVoted: number[];
+  usersHaveVoted: string[];
+  //answers: string[];
   answers: IAnswers[];
 }
 
