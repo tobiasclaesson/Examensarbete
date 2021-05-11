@@ -44,6 +44,7 @@ const AppStack: FC = () => {
         component={ResultScreen}
         options={{
           title: 'Poll Result',
+          headerLeft: (props) => <SignOutButton {...props} />,
         }}
       />
     </Stack.Navigator>
