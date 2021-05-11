@@ -85,17 +85,30 @@ const DBContextProvider: FC = (props: PropTypes) => {
 
   const addAnswer = async (answer: IOption[], closure?: () => void) => {
     const snapshot = await db.collection('polls').doc('activePoll').get();
-    let updatedAnswers = [];
+    let answerList: IAnswers[] = [{ rankingList: [] }];
+
+    const newAnswer: IAnswers = { rankingList: [] };
+
     if (snapshot) {
-      updatedAnswers = snapshot.data()?.answers || [];
+      const firebaseArray: IAnswers[] = snapshot.data()?.answers;
+
+      answer.forEach((ans) => {
+        newAnswer.rankingList.push(ans.title);
+      });
+
+      firebaseArray.push(newAnswer);
+      answerList = firebaseArray;
     }
-    updatedAnswers.push(answer);
+    /* 
+    answer.forEach((ans) => {
+      answerStringList.rankingList.push(ans.title);
+    }); */
 
     await db
       .collection('polls')
       .doc('activePoll')
       .update({
-        answers: updatedAnswers,
+        answers: answerList,
       })
       .then(() => {
         addUserHaveVoted();
