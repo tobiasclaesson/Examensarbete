@@ -8,10 +8,11 @@ import { DBContext } from '../context/dbContext';
 import { ReducerState } from '../store';
 import { useSelector } from 'react-redux';
 import SplashScreen from './splashScreen';
-import { IAnswers } from '../utils/types';
+import { IAnswers, IOption } from '../utils/types';
 import schulze from 'schulze-method';
-import { Button } from '../components';
+import { Button, CandidateResultItem } from '../components';
 import { strings } from '../utils/strings';
+import { ScrollView } from 'react-native-gesture-handler';
 
 type ResultScreenNavigationProp = StackNavigationProp<
   AppStackParamList,
@@ -30,7 +31,7 @@ const ResultScreen: FC<IProps> = (props: IProps) => {
 
   const { poll } = useSelector((state: ReducerState) => state.pollReducer);
 
-  const [result, setResult] = useState<any>({});
+  const [results, setResults] = useState<IResult[]>([]);
 
   type ConvertAnswerArrayType = Array<number[]>;
   const convertUserAnswers = (answers: IAnswers[]): ConvertAnswerArrayType => {
@@ -55,7 +56,7 @@ const ResultScreen: FC<IProps> = (props: IProps) => {
   };
 
   useEffect(() => {
-    setResult(
+    setResults(
       schulze.run(poll.options.length, convertUserAnswers(poll.answers))
     );
   }, [poll]);
@@ -64,19 +65,40 @@ const ResultScreen: FC<IProps> = (props: IProps) => {
     getPoll();
   }, []);
 
-  console.log('res: ', result);
+  //console.log('res: ', results);
+
+  interface IResult {
+    indexes: number[];
+    place: number;
+  }
 
   if (isLoading) return <SplashScreen />;
   if (pollIsLoading) return <SplashScreen />;
   return (
     <View style={styles.container}>
-      {userIsAdmin && (
-        <Button
-          title={strings.mainScreenCreatePollButton.eng}
-          onPress={() => navigation.navigate('CreatePollScreen')}
-        />
-      )}
-      <Text>Result</Text>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Result</Text>
+      </View>
+      <View style={styles.scrollViewContainer}>
+        <ScrollView style={styles.scrollView}>
+          {results.map((res) => (
+            <CandidateResultItem
+              key={res.place.toString()}
+              indexes={res.indexes}
+              place={res.place}
+              options={poll.options}
+            />
+          ))}
+        </ScrollView>
+      </View>
+      <View style={styles.buttonContainer}>
+        {userIsAdmin && (
+          <Button
+            title={strings.mainScreenCreatePollButton.eng}
+            onPress={() => navigation.navigate('CreatePollScreen')}
+          />
+        )}
+      </View>
     </View>
   );
 };
@@ -89,6 +111,30 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     backgroundColor: colors.lightGrey,
+  },
+  header: {
+    justifyContent: 'center',
+    flex: 1,
+  },
+  headerText: {
+    color: colors.black,
+    fontSize: 34,
+  },
+  scrollViewContainer: {
+    width: '90%',
+    flex: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  scrollView: {
+    flex: 1,
+    width: '100%',
+  },
+  buttonContainer: {
+    paddingVertical: 10,
+    width: '80%',
+    flex: 2,
+    paddingBottom: 30,
   },
 });
 
