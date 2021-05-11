@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+/* import React, { FC } from 'react';
 import { StyleSheet, View } from 'react-native';
 import PollListItem from './pollListItem';
 import { POLL_LIST_ITEM_HEIGHT } from '../utils/constants';
@@ -34,3 +34,4 @@ const styles = StyleSheet.create({
 });
 
 export default DraggablePollListItem;
+ */
