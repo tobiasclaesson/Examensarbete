@@ -29,6 +29,7 @@ const AuthContextProvider: FC<IProps> = (props: IProps) => {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
+      setIsLoading(true);
       setUser(user);
       checkUserRole();
     });
@@ -52,7 +53,6 @@ const AuthContextProvider: FC<IProps> = (props: IProps) => {
   };
 
   const signIn = async (email: string, password: string) => {
-    setIsLoading(true);
     try {
       await auth.signInWithEmailAndPassword(email, password);
     } catch (error) {

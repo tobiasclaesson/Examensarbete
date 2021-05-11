@@ -1,7 +1,7 @@
 import React, { createContext, FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { auth, db } from '../firebase/firebase';
-import { IOption, IPoll } from '../utils/types';
+import { IAnswers, IOption, IPoll } from '../utils/types';
 import * as ActionTypes from '../store/actions';
 import firebase from 'firebase';
 
@@ -83,16 +83,26 @@ const DBContextProvider: FC = (props: PropTypes) => {
       });
   };
 
-  const addAnswer = async (answer: IOption[]) => {
+  const addAnswer = async (answer: IOption[], closure?: () => void) => {
+    const snapshot = await db.collection('polls').doc('activePoll').get();
+    let updatedAnswers = [];
+    if (snapshot) {
+      updatedAnswers = snapshot.data()?.answers || [];
+    }
+    updatedAnswers.push(answer);
+
     await db
       .collection('polls')
       .doc('activePoll')
       .update({
-        answers: firebase.firestore.FieldValue.arrayUnion(
-          JSON.stringify(answer)
-        ),
+        answers: updatedAnswers,
       })
-      .then(() => addUserHaveVoted());
+      .then(() => {
+        addUserHaveVoted();
+        if (closure) {
+          closure();
+        }
+      });
   };
 
   return (
