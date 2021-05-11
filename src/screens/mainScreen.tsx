@@ -29,7 +29,7 @@ interface IProps {
 const MainScreen: FC<IProps> = (props: IProps) => {
   const { navigation } = props;
 
-  const { userIsAdmin, isLoading } = useContext(AuthContext);
+  const { user, userIsAdmin, isLoading } = useContext(AuthContext);
   const { getPoll, pollIsLoading, addAnswer } = useContext(DBContext);
   const dispatch = useDispatch();
 
@@ -39,7 +39,9 @@ const MainScreen: FC<IProps> = (props: IProps) => {
     poll.options
   );
 
-  console.log(usersOptionOrder);
+  useEffect(() => {
+    if (userHaveVoted()) navigation.navigate('ResultScreen');
+  });
 
   useEffect(() => {
     setUsersOptionsOrder(poll.options);
@@ -67,7 +69,7 @@ const MainScreen: FC<IProps> = (props: IProps) => {
   const renderItem = useCallback(
     ({ item, index, drag }: RenderItemParams<Item>) => {
       return (
-        <TouchableOpacity onPress={drag}>
+        <TouchableOpacity onLongPress={drag}>
           <PollListItem title={item.title} isText={true} i={index} />
         </TouchableOpacity>
       );
@@ -75,8 +77,21 @@ const MainScreen: FC<IProps> = (props: IProps) => {
     []
   );
 
+  const userHaveVoted = (): boolean => {
+    const userID = user?.uid;
+    let userHaveVoted = false;
+
+    poll.usersHaveVoted.forEach((id) => {
+      if (userID === id) {
+        userHaveVoted = true;
+      }
+    });
+    return userHaveVoted;
+  };
+
   if (isLoading) return <SplashScreen />;
   if (pollIsLoading) return <SplashScreen />;
+  // if (userHaveVoted()) return <ResultScreen />;
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -105,7 +120,11 @@ const MainScreen: FC<IProps> = (props: IProps) => {
 
         <Button
           title={strings.mainScreenSubmitButton.eng}
-          onPress={() => addAnswer(usersOptionOrder)}
+          onPress={() =>
+            addAnswer(usersOptionOrder, () =>
+              navigation.navigate('ResultScreen')
+            )
+          }
         />
       </View>
     </View>

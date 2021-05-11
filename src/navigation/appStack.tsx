@@ -1,12 +1,13 @@
 import React, { FC } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { MainScreen, CreatePollScreen } from '../screens';
+import { MainScreen, CreatePollScreen, ResultScreen } from '../screens';
 import colors from '../utils/colors';
 import SignOutButton from '../components/signOutButton';
 
 export type AppStackParamList = {
   MainScreen: undefined;
   CreatePollScreen: undefined;
+  ResultScreen: undefined;
 };
 
 const Stack = createStackNavigator<AppStackParamList>();
@@ -36,6 +37,13 @@ const AppStack: FC = () => {
         component={CreatePollScreen}
         options={{
           title: 'Create Poll',
+        }}
+      />
+      <Stack.Screen
+        name='ResultScreen'
+        component={ResultScreen}
+        options={{
+          title: 'Poll Result',
         }}
       />
     </Stack.Navigator>
