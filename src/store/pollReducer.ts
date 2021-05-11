@@ -7,7 +7,12 @@ export interface IPollState {
 }
 
 const initialState: IPollState = {
-  poll: { title: 'init', options: [], usersHaveVoted: [], answers: [] },
+  poll: {
+    title: 'init',
+    options: [],
+    usersHaveVoted: [],
+    answers: [],
+  },
 };
 
 export function pollReducer(
