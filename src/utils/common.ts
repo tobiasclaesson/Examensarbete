@@ -5,7 +5,5 @@ export function checkArrayForDuplicates(arr: IOption[]): boolean {
   arr.forEach((a) => {
     array.push(a.title);
   });
-  console.log(new Set(array).size !== array.length);
-
   return new Set(array).size !== array.length;
 }
