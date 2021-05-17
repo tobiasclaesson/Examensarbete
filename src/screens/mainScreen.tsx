@@ -4,7 +4,7 @@ import { AppStackParamList } from '../navigation/appStack';
 import { StackNavigationProp } from '@react-navigation/stack';
 import colors from '../utils/colors';
 import { AuthContext } from '../context/authContext';
-import { Button, PollListItem } from '../components';
+import { Button, PollListItem, TextInputField } from '../components';
 import SplashScreen from './splashScreen';
 import { DBContext } from '../context/dbContext';
 import { useDispatch, useSelector } from 'react-redux';
@@ -35,6 +35,8 @@ const MainScreen: FC<IProps> = (props: IProps) => {
 
   const { poll } = useSelector((state: ReducerState) => state.pollReducer);
 
+  const [name, setName] = useState<string>('');
+  const [comment, setComment] = useState<string>('');
   const [usersOptionOrder, setUsersOptionsOrder] = useState<IOption[]>(
     poll.options
   );
@@ -45,6 +47,8 @@ const MainScreen: FC<IProps> = (props: IProps) => {
 
   useEffect(() => {
     setUsersOptionsOrder(poll.options);
+    setName('');
+    setComment('');
   }, [poll]);
 
   useEffect(() => {
@@ -99,16 +103,27 @@ const MainScreen: FC<IProps> = (props: IProps) => {
       </View>
 
       <View style={styles.scrollViewContainer}>
+        <TextInputField
+          placeholder='name'
+          value={name}
+          onChangeText={(text) => setName(text)}
+        />
         <Text style={styles.descText}>
           {strings.mainScreenUnorderedListDesc.eng}
         </Text>
         <DraggableFlatList
+          style={styles.scrollView}
           data={usersOptionOrder}
           renderItem={renderItem}
           keyExtractor={(item) => item.title}
           onDragEnd={({ data }) =>
             dispatch(Actions.updatePoll({ ...poll, options: data }))
           }
+        />
+        <TextInputField
+          placeholder='comment'
+          value={comment}
+          onChangeText={(text) => setComment(text)}
         />
       </View>
 
@@ -123,7 +138,7 @@ const MainScreen: FC<IProps> = (props: IProps) => {
         <Button
           title={strings.mainScreenSubmitButton.eng}
           onPress={() =>
-            addAnswer(usersOptionOrder, () =>
+            addAnswer(name, usersOptionOrder, comment, () =>
               navigation.navigate('ResultScreen')
             )
           }
@@ -145,7 +160,7 @@ const styles = StyleSheet.create({
   header: {
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 1,
+    flex: 2,
   },
   headerText: {
     color: colors.black,
@@ -156,19 +171,22 @@ const styles = StyleSheet.create({
     fontSize: 18,
     alignSelf: 'center',
     overflow: 'visible',
+    paddingVertical: 5,
+    paddingTop: 10,
   },
   scrollViewContainer: {
     paddingTop: 10,
     width: '90%',
-    flex: 6,
+    flex: 18,
   },
   scrollView: {
     flex: 1,
+    marginBottom: 10,
   },
   buttonContainer: {
     paddingVertical: 10,
-    width: '80%',
-    flex: 2,
+    width: '90%',
+    flex: 6,
     paddingBottom: 30,
   },
 });
