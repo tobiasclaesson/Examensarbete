@@ -40,7 +40,7 @@ const TextInputField: FC<IProps> = (props: IProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: '90%',
+    width: '100%',
     alignSelf: 'center',
     backgroundColor: colors.textInputBackground,
     borderRadius: 5,
