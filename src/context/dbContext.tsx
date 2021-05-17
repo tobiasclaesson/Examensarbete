@@ -1,4 +1,4 @@
-import React, { createContext, FC, useEffect, useState } from 'react';
+import React, { createContext, FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { auth, db } from '../firebase/firebase';
 import { IAnswers, IOption, IPoll } from '../utils/types';
@@ -22,8 +22,14 @@ const initialState = {
   getPoll: () => {},
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   addPoll: (poll: IPoll, closure?: (() => void) | undefined) => {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  addAnswer: (answer: IOption[], closure?: (() => void) | undefined) => {},
+
+  addAnswer: (
+    name: string,
+    answer: IOption[],
+    comment: string,
+    closure?: (() => void) | undefined
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+  ) => {},
 };
 
 export const DBContext = createContext(initialState);
@@ -83,11 +89,20 @@ const DBContextProvider: FC = (props: PropTypes) => {
       });
   };
 
-  const addAnswer = async (answer: IOption[], closure?: () => void) => {
+  const addAnswer = async (
+    name: string,
+    answer: IOption[],
+    comment: string,
+    closure?: () => void
+  ) => {
     const snapshot = await db.collection('polls').doc('activePoll').get();
-    let answerList: IAnswers[] = [{ rankingList: [] }];
+    let answerList: IAnswers[] = [];
 
-    const newAnswer: IAnswers = { rankingList: [] };
+    const newAnswer: IAnswers = {
+      name: name,
+      rankingList: [],
+      comment: comment,
+    };
 
     if (snapshot) {
       const firebaseArray: IAnswers[] = snapshot.data()?.answers;
