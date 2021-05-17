@@ -23,18 +23,20 @@ const LoginScreen: FC<IProps> = (props: IProps) => {
 
   return (
     <View style={styles.container}>
-      <TextInputField
-        placeholder='Email'
-        value={email}
-        onChangeText={(text) => setEmail(text)}
-        keyboardType={'email-address'}
-      />
-      <TextInputField
-        placeholder='Password'
-        value={password}
-        onChangeText={(text) => setPassword(text)}
-        secureTextEntry={true}
-      />
+      <View style={styles.inputContainer}>
+        <TextInputField
+          placeholder='Email'
+          value={email}
+          onChangeText={(text) => setEmail(text)}
+          keyboardType={'email-address'}
+        />
+        <TextInputField
+          placeholder='Password'
+          value={password}
+          onChangeText={(text) => setPassword(text)}
+          secureTextEntry={true}
+        />
+      </View>
       <View style={styles.buttonContainer}>
         <Button
           title={strings.loginScreenSignUpButton.eng}
@@ -62,6 +64,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.lightGrey,
+  },
+  inputContainer: {
+    width: '90%',
   },
   buttonContainer: {
     flexDirection: 'row',

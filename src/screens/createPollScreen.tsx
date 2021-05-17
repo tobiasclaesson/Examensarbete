@@ -100,11 +100,13 @@ const MainScreen: FC<IProps> = (props: IProps) => {
 
   return (
     <View style={styles.container}>
-      <TextInputField
-        placeholder='title'
-        value={title}
-        onChangeText={(text) => setTitle(text)}
-      />
+      <View style={styles.titleInputContainer}>
+        <TextInputField
+          placeholder='title'
+          value={title}
+          onChangeText={(text) => setTitle(text)}
+        />
+      </View>
       <View style={styles.scrollViewContainer}>
         <ScrollView style={styles.scrollView}>
           {options.map((option, i) => (
@@ -138,6 +140,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     height: '100%',
     backgroundColor: colors.lightGrey,
+  },
+  titleInputContainer: {
+    width: '90%',
   },
   scrollViewContainer: {
     paddingTop: 10,
