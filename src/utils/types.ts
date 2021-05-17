@@ -13,5 +13,7 @@ export interface IOption {
 }
 
 export interface IAnswers {
+  name: string;
+  comment: string;
   rankingList: string[];
 }
