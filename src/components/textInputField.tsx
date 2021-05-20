@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginVertical: 5,
   },
-  textInput: { padding: 15 },
+  textInput: { padding: 15, minHeight: 45 },
 });
 
 export default TextInputField;
