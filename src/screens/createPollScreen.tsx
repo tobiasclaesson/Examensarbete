@@ -98,6 +98,14 @@ const MainScreen: FC<IProps> = (props: IProps) => {
     );
   };
 
+  const removeItem = (i: number) => {
+    const array = options.filter((item, index) => {
+      console.log(i, index);
+      return i !== index;
+    });
+    setOptions(array);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.titleInputContainer}>
@@ -115,6 +123,9 @@ const MainScreen: FC<IProps> = (props: IProps) => {
               title={option.title}
               onChangeText={(text) => setOption(text, i)}
               isText={false}
+              i={i}
+              removeItem={removeItem}
+              removable
             />
           ))}
         </ScrollView>
