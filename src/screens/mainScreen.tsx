@@ -35,7 +35,6 @@ const MainScreen: FC<IProps> = (props: IProps) => {
 
   const { poll } = useSelector((state: ReducerState) => state.pollReducer);
 
-  const [name, setName] = useState<string>('');
   const [comment, setComment] = useState<string>('');
   const [usersOptionOrder, setUsersOptionsOrder] = useState<IOption[]>(
     poll.options
@@ -47,8 +46,6 @@ const MainScreen: FC<IProps> = (props: IProps) => {
 
   useEffect(() => {
     setUsersOptionsOrder(poll.options);
-    setName('');
-    setComment('');
   }, [poll]);
 
   useEffect(() => {
@@ -103,11 +100,6 @@ const MainScreen: FC<IProps> = (props: IProps) => {
       </View>
 
       <View style={styles.scrollViewContainer}>
-        <TextInputField
-          placeholder='name'
-          value={name}
-          onChangeText={(text) => setName(text)}
-        />
         <Text style={styles.descText}>
           {strings.mainScreenUnorderedListDesc.eng}
         </Text>
@@ -138,7 +130,7 @@ const MainScreen: FC<IProps> = (props: IProps) => {
         <Button
           title={strings.mainScreenSubmitButton.eng}
           onPress={() =>
-            addAnswer(name, usersOptionOrder, comment, () =>
+            addAnswer(user?.email || '', usersOptionOrder, comment, () =>
               navigation.navigate('ResultScreen')
             )
           }
