@@ -17,9 +17,18 @@ const CandidateResultItem: FC<IProps> = (props: IProps) => {
       <Text style={styles.text}>{place}.</Text>
       <View style={styles.optionsContainer}>
         {indexes.map((i) => (
-          <Text key={i.toString()} style={styles.text}>
-            {options[i].title}
-          </Text>
+          <View
+            style={indexes.length > 1 && i < indexes.length && styles.seperator}
+          >
+            <Text key={i.toString()} style={styles.text}>
+              {options[i].title}
+            </Text>
+            {/* {indexes.length > 1 && i < indexes.length && (
+              <Text key={String(i + 1)} style={styles.text}>
+                --------------------------------------
+              </Text>
+            )} */}
+          </View>
         ))}
       </View>
     </View>
@@ -46,6 +55,10 @@ const styles = StyleSheet.create({
   },
   optionsContainer: {
     flexDirection: 'column',
+  },
+  seperator: {
+    borderBottomColor: 'white',
+    borderBottomWidth: 2,
   },
 });
 
