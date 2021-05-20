@@ -1,5 +1,12 @@
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { AppStackParamList } from '../navigation/appStack';
 import { StackNavigationProp } from '@react-navigation/stack';
 import colors from '../utils/colors';
@@ -9,7 +16,10 @@ import SplashScreen from './splashScreen';
 import { DBContext } from '../context/dbContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { ReducerState } from '../store';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import {
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from 'react-native-gesture-handler';
 import { strings } from '../utils/strings';
 import DraggableFlatList, {
   RenderItemParams,
@@ -94,49 +104,59 @@ const MainScreen: FC<IProps> = (props: IProps) => {
   if (pollIsLoading) return <SplashScreen />;
   // if (userHaveVoted()) return <ResultScreen />;
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>{poll.title}</Text>
-      </View>
+    <TouchableWithoutFeedback
+      style={{ height: '100%' }}
+      onPress={Keyboard.dismiss}
+    >
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>{poll.title}</Text>
+        </View>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={120}
+          style={{ flex: 24, alignItems: 'center', width: '100%' }}
+        >
+          <View style={styles.scrollViewContainer}>
+            <Text style={styles.descText}>
+              {strings.mainScreenUnorderedListDesc.eng}
+            </Text>
+            <DraggableFlatList
+              style={styles.scrollView}
+              data={usersOptionOrder}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.title}
+              onDragEnd={({ data }) =>
+                dispatch(Actions.updatePoll({ ...poll, options: data }))
+              }
+            />
+            <TextInputField
+              placeholder='comment'
+              value={comment}
+              onChangeText={(text) => setComment(text)}
+            />
+          </View>
 
-      <View style={styles.scrollViewContainer}>
-        <Text style={styles.descText}>
-          {strings.mainScreenUnorderedListDesc.eng}
-        </Text>
-        <DraggableFlatList
-          style={styles.scrollView}
-          data={usersOptionOrder}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.title}
-          onDragEnd={({ data }) =>
-            dispatch(Actions.updatePoll({ ...poll, options: data }))
-          }
-        />
-        <TextInputField
-          placeholder='comment'
-          value={comment}
-          onChangeText={(text) => setComment(text)}
-        />
-      </View>
+          <View style={styles.buttonContainer}>
+            {userIsAdmin && (
+              <Button
+                title={strings.mainScreenCreatePollButton.eng}
+                onPress={() => navigation.navigate('CreatePollScreen')}
+              />
+            )}
 
-      <View style={styles.buttonContainer}>
-        {userIsAdmin && (
-          <Button
-            title={strings.mainScreenCreatePollButton.eng}
-            onPress={() => navigation.navigate('CreatePollScreen')}
-          />
-        )}
-
-        <Button
-          title={strings.mainScreenSubmitButton.eng}
-          onPress={() =>
-            addAnswer(user?.email || '', usersOptionOrder, comment, () =>
-              navigation.navigate('ResultScreen')
-            )
-          }
-        />
+            <Button
+              title={strings.mainScreenSubmitButton.eng}
+              onPress={() =>
+                addAnswer(user?.email || '', usersOptionOrder, comment, () =>
+                  navigation.navigate('ResultScreen')
+                )
+              }
+            />
+          </View>
+        </KeyboardAvoidingView>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 
