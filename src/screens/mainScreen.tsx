@@ -6,6 +6,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
 import { AppStackParamList } from '../navigation/appStack';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -100,6 +101,23 @@ const MainScreen: FC<IProps> = (props: IProps) => {
     return userHaveVoted;
   };
 
+  const submitAlert = () => {
+    Alert.alert(
+      'Submit',
+      'Please note that you will not be able to edit your answers after clicking on submit',
+      [
+        { text: 'Cancel' },
+        {
+          text: 'Submit',
+          onPress: () =>
+            addAnswer(user?.email || '', usersOptionOrder, comment, () =>
+              navigation.navigate('ResultScreen')
+            ),
+        },
+      ]
+    );
+  };
+
   if (isLoading) return <SplashScreen />;
   if (pollIsLoading) return <SplashScreen />;
   // if (userHaveVoted()) return <ResultScreen />;
@@ -147,11 +165,7 @@ const MainScreen: FC<IProps> = (props: IProps) => {
 
             <Button
               title={strings.mainScreenSubmitButton.eng}
-              onPress={() =>
-                addAnswer(user?.email || '', usersOptionOrder, comment, () =>
-                  navigation.navigate('ResultScreen')
-                )
-              }
+              onPress={() => submitAlert()}
             />
           </View>
         </KeyboardAvoidingView>
