@@ -76,9 +76,6 @@ const ResultScreen: FC<IProps> = (props: IProps) => {
   if (pollIsLoading) return <SplashScreen />;
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Result</Text>
-      </View>
       <View style={styles.scrollViewContainer}>
         <ScrollView style={styles.scrollView}>
           {results.map((res) => (
@@ -112,15 +109,12 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: colors.lightGrey,
   },
-  header: {
-    justifyContent: 'center',
-    flex: 1,
-  },
   headerText: {
     color: colors.black,
     fontSize: 34,
   },
   scrollViewContainer: {
+    paddingVertical: 20,
     width: '90%',
     flex: 8,
     alignItems: 'center',
