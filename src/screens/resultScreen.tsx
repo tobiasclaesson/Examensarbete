@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 import SplashScreen from './splashScreen';
 import { IAnswers, IOption } from '../utils/types';
 import schulze from 'schulze-method';
-import { Button, CandidateResultItem } from '../components';
+import { Button, CandidateResultItem, CommentListItem } from '../components';
 import { strings } from '../utils/strings';
 import { ScrollView } from 'react-native-gesture-handler';
 
@@ -35,7 +35,7 @@ const ResultScreen: FC<IProps> = (props: IProps) => {
 
   interface IComment {
     author: string;
-    comment: string;
+    text: string;
   }
   const [comments, setComments] = useState<IComment[]>([]);
 
@@ -76,7 +76,7 @@ const ResultScreen: FC<IProps> = (props: IProps) => {
     const array: IComment[] = [];
     poll.answers.forEach((answer) => {
       if (answer.comment && answer.comment !== '') {
-        array.push({ author: answer.name, comment: answer.comment });
+        array.push({ author: answer.name, text: answer.comment });
       }
     });
     setComments(array);
@@ -108,7 +108,11 @@ const ResultScreen: FC<IProps> = (props: IProps) => {
       <View style={styles.commentsContainer}>
         <ScrollView style={styles.scrollView}>
           {comments.map((comment) => (
-            <Text key={comment.author}>{comment.comment}</Text>
+            <CommentListItem
+              key={comment.author}
+              author={comment.author}
+              text={comment.text}
+            />
           ))}
         </ScrollView>
       </View>
@@ -143,7 +147,6 @@ const styles = StyleSheet.create({
     flex: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'yellow',
   },
   scrollView: {
     flex: 1,
@@ -151,7 +154,7 @@ const styles = StyleSheet.create({
   },
   commentsContainer: {
     flex: 6,
-    backgroundColor: 'beige',
+
     width: '90%',
     alignItems: 'center',
     justifyContent: 'center',
