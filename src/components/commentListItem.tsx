@@ -20,7 +20,7 @@ const CommentListItem: FC<IProps> = (props: IProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 20,
+    borderRadius: 15,
     marginTop: 5,
     paddingVertical: 15,
     width: '100%',
