@@ -33,6 +33,12 @@ const ResultScreen: FC<IProps> = (props: IProps) => {
 
   const [results, setResults] = useState<IResult[]>([]);
 
+  interface IComment {
+    author: string;
+    comment: string;
+  }
+  const [comments, setComments] = useState<IComment[]>([]);
+
   type ConvertAnswerArrayType = Array<number[]>;
   const convertUserAnswers = (answers: IAnswers[]): ConvertAnswerArrayType => {
     const convertedAnswerArray: ConvertAnswerArrayType = [];
@@ -59,11 +65,22 @@ const ResultScreen: FC<IProps> = (props: IProps) => {
     setResults(
       schulze.run(poll.options.length, convertUserAnswers(poll.answers))
     );
+    getAllComments();
   }, [poll]);
 
   useEffect(() => {
     getPoll();
   }, []);
+
+  const getAllComments = () => {
+    const array: IComment[] = [];
+    poll.answers.forEach((answer) => {
+      if (answer.comment && answer.comment !== '') {
+        array.push({ author: answer.name, comment: answer.comment });
+      }
+    });
+    setComments(array);
+  };
 
   //console.log('res: ', results);
 
@@ -88,14 +105,21 @@ const ResultScreen: FC<IProps> = (props: IProps) => {
           ))}
         </ScrollView>
       </View>
-      <View style={styles.buttonContainer}>
-        {userIsAdmin && (
+      <View style={styles.commentsContainer}>
+        <ScrollView style={styles.scrollView}>
+          {comments.map((comment) => (
+            <Text key={comment.author}>{comment.comment}</Text>
+          ))}
+        </ScrollView>
+      </View>
+      {userIsAdmin && (
+        <View style={styles.buttonContainer}>
           <Button
             title={strings.mainScreenCreatePollButton.eng}
             onPress={() => navigation.navigate('CreatePollScreen')}
           />
-        )}
-      </View>
+        </View>
+      )}
     </View>
   );
 };
@@ -119,10 +143,19 @@ const styles = StyleSheet.create({
     flex: 8,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'yellow',
   },
   scrollView: {
     flex: 1,
     width: '100%',
+  },
+  commentsContainer: {
+    flex: 6,
+    backgroundColor: 'beige',
+    width: '90%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 20,
   },
   buttonContainer: {
     paddingVertical: 10,
