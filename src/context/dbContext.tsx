@@ -1,4 +1,4 @@
-import React, { createContext, FC, useState } from 'react';
+import React, { createContext, FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { auth, db } from '../firebase/firebase';
 import { IAnswers, IOption, IPoll } from '../utils/types';
@@ -40,6 +40,24 @@ const DBContextProvider: FC = (props: PropTypes) => {
   const dispatch = useDispatch();
 
   const [pollIsLoading, setPollIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (auth.currentUser) {
+      const pollSubscriber = db
+        .collection('polls')
+        .onSnapshot((querySnapshot) => {
+          querySnapshot.forEach((documentSnapshot) => {
+            if (documentSnapshot.id === 'activePoll') {
+              dispatch(
+                ActionTypes.updatePoll(documentSnapshot.data() as IPoll)
+              );
+            }
+          });
+        });
+
+      return () => pollSubscriber();
+    }
+  });
 
   const getPoll = async () => {
     const doc = await db.collection('polls').doc('activePoll').get();
