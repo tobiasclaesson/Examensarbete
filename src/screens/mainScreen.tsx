@@ -63,18 +63,6 @@ const MainScreen: FC<IProps> = (props: IProps) => {
     getPoll();
   }, []);
 
-  /* function listToObject(list: any) {
-    const values = Object.values(list);
-    const object = {};
-
-    for (let i = 0; i < values.length; i++) {
-      object[values[i].id] = i;
-    }
-    console.log(object);
-
-    return object;
-  } */
-
   type Item = {
     title: string;
   };
@@ -120,16 +108,12 @@ const MainScreen: FC<IProps> = (props: IProps) => {
 
   if (isLoading) return <SplashScreen />;
   if (pollIsLoading) return <SplashScreen />;
-  // if (userHaveVoted()) return <ResultScreen />;
   return (
     <TouchableWithoutFeedback
       style={{ height: '100%' }}
       onPress={Keyboard.dismiss}
     >
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.headerText}>{poll.title}</Text>
-        </View>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={120}
