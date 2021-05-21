@@ -32,6 +32,7 @@ const TextInputField: FC<IProps> = (props: IProps) => {
         keyboardType={keyboardType || 'default'}
         autoCompleteType='off'
         autoCorrect={false}
+        autoCapitalize='none'
         autoFocus={shouldAutoFocus || false}
       />
     </View>
