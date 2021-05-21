@@ -18,11 +18,10 @@ const CandidateResultItem: FC<IProps> = (props: IProps) => {
       <View style={styles.optionsContainer}>
         {indexes.map((i) => (
           <View
+            key={i.toString()}
             style={indexes.length > 1 && i < indexes.length && styles.seperator}
           >
-            <Text key={i.toString()} style={styles.text}>
-              {options[i].title}
-            </Text>
+            <Text style={styles.text}>{options[i].title}</Text>
             {/* {indexes.length > 1 && i < indexes.length && (
               <Text key={String(i + 1)} style={styles.text}>
                 --------------------------------------
