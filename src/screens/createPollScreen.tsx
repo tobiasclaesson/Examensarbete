@@ -1,4 +1,4 @@
-import React, { FC, useContext, useState } from 'react';
+import React, { FC, useContext, useRef, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -36,6 +36,7 @@ const MainScreen: FC<IProps> = (props: IProps) => {
   const { navigation } = props;
 
   const { addPoll } = useContext(DBContext);
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const [title, setTitle] = useState<string>('');
   const [options, setOptions] = useState<IOption[]>([]);
@@ -136,7 +137,12 @@ const MainScreen: FC<IProps> = (props: IProps) => {
           style={{ flex: 9, alignItems: 'center', width: '100%' }}
         >
           <View style={styles.scrollViewContainer}>
-            <ScrollView style={styles.scrollView}>
+            <ScrollView
+              ref={scrollViewRef}
+              onContentSizeChange={() => scrollViewRef.current!.scrollToEnd()}
+              onLayout={() => scrollViewRef.current!.scrollToEnd()}
+              style={styles.scrollView}
+            >
               {options.map((option, i) => (
                 <PollListItem
                   key={i}
