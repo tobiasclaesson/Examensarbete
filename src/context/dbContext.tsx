@@ -43,9 +43,8 @@ const DBContextProvider: FC = (props: PropTypes) => {
 
   useEffect(() => {
     if (auth.currentUser) {
-      const pollSubscriber = db
-        .collection('polls')
-        .onSnapshot((querySnapshot) => {
+      const pollSubscriber = db.collection('polls').onSnapshot(
+        (querySnapshot) => {
           querySnapshot.forEach((documentSnapshot) => {
             if (documentSnapshot.id === 'activePoll') {
               dispatch(
@@ -53,58 +52,78 @@ const DBContextProvider: FC = (props: PropTypes) => {
               );
             }
           });
-        });
+        },
+        (error) => {
+          if (auth.currentUser) {
+            console.log('error: onSnapshot', error);
+          }
+        }
+      );
 
       return () => pollSubscriber();
     }
   });
 
   const getPoll = async () => {
-    const doc = await db.collection('polls').doc('activePoll').get();
+    try {
+      const doc = await db.collection('polls').doc('activePoll').get();
 
-    if (doc) {
-      const activePoll = {
-        id: doc.id,
-        title: doc.data()?.title,
-        options: doc.data()?.options,
-        usersHaveVoted: doc.data()?.usersHaveVoted,
-        answers: doc.data()?.answers,
-      };
+      if (doc) {
+        const activePoll = {
+          id: doc.id,
+          title: doc.data()?.title,
+          options: doc.data()?.options,
+          usersHaveVoted: doc.data()?.usersHaveVoted,
+          answers: doc.data()?.answers,
+        };
 
-      dispatch(ActionTypes.updatePoll(activePoll));
-      setPollIsLoading(false);
+        dispatch(ActionTypes.updatePoll(activePoll));
+        setPollIsLoading(false);
+      }
+    } catch (error) {
+      console.log('error: getPoll ', error);
     }
   };
 
   const addPoll = async (poll: IPoll, closure?: () => void | void) => {
+    console.log('in add poll: ', auth.currentUser);
+
     setPollIsLoading(true);
     if (auth.currentUser) {
-      const snapshot = await db.collection('polls').doc('activePoll').get();
+      try {
+        const snapshot = await db.collection('polls').doc('activePoll').get();
 
-      await db.collection('polls').doc('activePoll').set(poll);
+        await db.collection('polls').doc('activePoll').set(poll);
 
-      if (snapshot) {
-        const finishedPoll = snapshot.data() || pollInitialState;
-        await db.collection('finishedPolls').add(finishedPoll);
-      }
+        if (snapshot) {
+          const finishedPoll = snapshot.data() || pollInitialState;
+          await db.collection('finishedPolls').add(finishedPoll);
+        }
 
-      getPoll();
+        getPoll();
 
-      if (closure) {
-        closure();
+        if (closure) {
+          closure();
+        }
+      } catch (error) {
+        console.log('error: addPoll ', error);
       }
     }
   };
 
   const addUserHaveVoted = async () => {
-    await db
-      .collection('polls')
-      .doc('activePoll')
-      .update({
-        usersHaveVoted: firebase.firestore.FieldValue.arrayUnion(
-          auth.currentUser?.uid
-        ),
-      });
+    try {
+      await db
+        .collection('polls')
+        .doc('activePoll')
+        .update({
+          usersHaveVoted: firebase.firestore.FieldValue.arrayUnion(
+            auth.currentUser?.uid
+          ),
+        });
+    } catch (error) {
+      console.log('error: addUsersVoted', error);
+    }
   };
 
   const addAnswer = async (
@@ -113,42 +132,42 @@ const DBContextProvider: FC = (props: PropTypes) => {
     comment: string,
     closure?: () => void
   ) => {
-    const snapshot = await db.collection('polls').doc('activePoll').get();
-    let answerList: IAnswers[] = [];
+    try {
+      const snapshot = await db.collection('polls').doc('activePoll').get();
+      let answerList: IAnswers[] = [];
 
-    const newAnswer: IAnswers = {
-      name: name,
-      rankingList: [],
-      comment: comment,
-    };
+      const newAnswer: IAnswers = {
+        name: name,
+        rankingList: [],
+        comment: comment,
+      };
 
-    if (snapshot) {
-      const firebaseArray: IAnswers[] = snapshot.data()?.answers;
+      if (snapshot) {
+        const firebaseArray: IAnswers[] = snapshot.data()?.answers;
 
-      answer.forEach((ans) => {
-        newAnswer.rankingList.push(ans.title);
-      });
+        answer.forEach((ans) => {
+          newAnswer.rankingList.push(ans.title);
+        });
 
-      firebaseArray.push(newAnswer);
-      answerList = firebaseArray;
+        firebaseArray.push(newAnswer);
+        answerList = firebaseArray;
+      }
+
+      await db
+        .collection('polls')
+        .doc('activePoll')
+        .update({
+          answers: answerList,
+        })
+        .then(() => {
+          addUserHaveVoted();
+          if (closure) {
+            closure();
+          }
+        });
+    } catch (error) {
+      console.log('error: addAnswers ', error);
     }
-    /* 
-    answer.forEach((ans) => {
-      answerStringList.rankingList.push(ans.title);
-    }); */
-
-    await db
-      .collection('polls')
-      .doc('activePoll')
-      .update({
-        answers: answerList,
-      })
-      .then(() => {
-        addUserHaveVoted();
-        if (closure) {
-          closure();
-        }
-      });
   };
 
   return (

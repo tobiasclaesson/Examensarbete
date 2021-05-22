@@ -25,31 +25,47 @@ const AuthContextProvider: FC<IProps> = (props: IProps) => {
 
   const [user, setUser] = useState<firebase.User | null>(null);
   const [userIsAdmin, setUserIsAdmin] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setIsLoading(true);
-      setUser(user);
-      checkUserRole();
-    });
+    const unsubscribe = auth.onAuthStateChanged(
+      (user) => {
+        if (user) {
+          console.log('user is not null');
+        } else {
+          console.log('user is null');
+        }
+        setIsLoading(true);
+        setUser(user);
+        if (user) {
+          checkUserRole();
+        }
+        setIsLoading(false);
+      },
+      (error) => {
+        console.log('error: authChange ', error);
+      }
+    );
 
     return unsubscribe;
   }, []);
 
   const checkUserRole = async () => {
-    const snapshot = await db.collection('admins').get();
+    try {
+      const snapshot = await db.collection('admins').get();
 
-    if (snapshot) {
-      snapshot.forEach((doc) => {
-        if (doc.data().email === auth.currentUser?.email) {
-          setUserIsAdmin(true);
-        } else {
-          setUserIsAdmin(false);
-        }
-      });
+      if (snapshot) {
+        snapshot.forEach((doc) => {
+          if (doc.data().email === auth.currentUser?.email) {
+            setUserIsAdmin(true);
+          } else {
+            setUserIsAdmin(false);
+          }
+        });
+      }
+    } catch (error) {
+      console.log('error: userRoleCheck ', error);
     }
-    setIsLoading(false);
   };
 
   const signIn = async (email: string, password: string) => {
@@ -61,12 +77,10 @@ const AuthContextProvider: FC<IProps> = (props: IProps) => {
   };
 
   const signOut = async () => {
-    console.log(`Signing out ${user?.email}`);
-
     try {
       await auth.signOut();
     } catch (error) {
-      console.log('error:', error);
+      console.log('error: signOut ', error);
     }
   };
 
