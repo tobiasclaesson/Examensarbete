@@ -98,8 +98,12 @@ const MainScreen: FC<IProps> = (props: IProps) => {
         {
           text: 'Submit',
           onPress: () =>
-            addAnswer(user?.email || '', usersOptionOrder, comment, () =>
-              navigation.navigate('ResultScreen')
+            addAnswer(
+              user?.email || '',
+              usersOptionOrder,
+              comment,
+              new Date(),
+              () => navigation.navigate('ResultScreen')
             ),
         },
       ]
