@@ -30,11 +30,6 @@ const AuthContextProvider: FC<IProps> = (props: IProps) => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(
       (user) => {
-        if (user) {
-          console.log('user is not null');
-        } else {
-          console.log('user is null');
-        }
         setIsLoading(true);
         setUser(user);
         if (user) {
