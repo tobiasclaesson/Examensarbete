@@ -16,4 +16,16 @@ export interface IAnswers {
   name: string;
   comment: string;
   rankingList: string[];
+  date: Date;
+}
+
+export interface IResult {
+  indexes: number[];
+  place: number;
+}
+
+export interface IComment {
+  author: string;
+  text: string;
+  date: Date;
 }
