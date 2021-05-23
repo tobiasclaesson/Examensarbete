@@ -35,4 +35,10 @@ export const strings = {
   createPollScreenAlertTypeMissingOptionMsg: {
     eng: 'There are to few options, please add options before updating poll',
   },
+  signOutBtnText: {
+    eng: 'Sign Out',
+  },
+  commentListItemAuthorLabel: {
+    eng: 'From: ',
+  },
 };

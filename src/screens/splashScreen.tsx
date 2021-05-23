@@ -21,7 +21,6 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: 'Verdana',
     fontSize: 24,
-
     padding: 50,
   },
 });

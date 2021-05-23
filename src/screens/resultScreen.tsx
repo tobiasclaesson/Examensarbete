@@ -39,10 +39,7 @@ const ResultScreen: FC<IProps> = (props: IProps) => {
   const [comments, setComments] = useState<IComment[]>([]);
 
   useEffect(() => {
-    setResults(
-      runSchulzesMethod(poll)
-      //schulze.run(poll.options.length, convertUserAnswers(poll.answers))
-    );
+    setResults(runSchulzesMethod(poll));
     getAllComments();
   }, [poll]);
 
@@ -64,8 +61,6 @@ const ResultScreen: FC<IProps> = (props: IProps) => {
 
     setComments(bubbleSortCommentsDescendingByDate(array));
   };
-
-  //console.log('res: ', results);
 
   if (isLoading) return <SplashScreen />;
   if (pollIsLoading) return <SplashScreen />;

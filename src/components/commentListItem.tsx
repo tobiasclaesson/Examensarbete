@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import colors from '../utils/colors';
+import { strings } from '../utils/strings';
 
 interface IProps {
   author: string;
@@ -12,7 +13,9 @@ const CommentListItem: FC<IProps> = (props: IProps) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.authorText}>From: {author}</Text>
+      <Text style={styles.authorText}>
+        {strings.commentListItemAuthorLabel.eng} {author}
+      </Text>
       <Text style={styles.text}>{text}</Text>
     </View>
   );
