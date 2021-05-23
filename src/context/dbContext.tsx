@@ -22,8 +22,15 @@ const initialState = {
   getPoll: () => {},
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   addPoll: (poll: IPoll, closure?: (() => void) | undefined) => {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  addAnswer: (answer: IOption[], closure?: (() => void) | undefined) => {},
+
+  addAnswer: (
+    name: string,
+    answer: IOption[],
+    comment: string,
+    date: Date,
+    closure?: (() => void) | undefined
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+  ) => {},
 };
 
 export const DBContext = createContext(initialState);
@@ -35,87 +42,157 @@ const DBContextProvider: FC = (props: PropTypes) => {
 
   const [pollIsLoading, setPollIsLoading] = useState(true);
 
+  useEffect(() => {
+    if (auth.currentUser) {
+      const pollSubscriber = db.collection('polls').onSnapshot(
+        (querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            if (doc.id === 'activePoll') {
+              const ans = doc.data()?.answers;
+              const answers: IAnswers[] = [];
+
+              ans.forEach((a: any) => {
+                if (a.date) {
+                  answers.push({ ...a, date: a.date.toDate() });
+                }
+              });
+
+              const activePoll = {
+                id: doc.id,
+                title: doc.data()?.title,
+                options: doc.data()?.options,
+                usersHaveVoted: doc.data()?.usersHaveVoted,
+                answers: answers,
+              };
+
+              dispatch(ActionTypes.updatePoll(activePoll));
+            }
+          });
+        },
+        (error) => {
+          if (auth.currentUser) {
+            console.log('error: onSnapshot', error);
+          }
+        }
+      );
+
+      return () => pollSubscriber();
+    }
+  });
+
   const getPoll = async () => {
-    const doc = await db.collection('polls').doc('activePoll').get();
+    try {
+      const doc = await db.collection('polls').doc('activePoll').get();
 
-    if (doc) {
-      const activePoll = {
-        id: doc.id,
-        title: doc.data()?.title,
-        options: doc.data()?.options,
-        usersHaveVoted: doc.data()?.usersHaveVoted,
-        answers: doc.data()?.answers,
-      };
+      if (doc) {
+        const ans = doc.data()?.answers;
+        const answers: IAnswers[] = [];
 
-      dispatch(ActionTypes.updatePoll(activePoll));
-      setPollIsLoading(false);
+        ans.forEach((a: any) => {
+          if (a.date) {
+            answers.push({ ...a, date: a.date.toDate() });
+          }
+        });
+
+        const activePoll = {
+          id: doc.id,
+          title: doc.data()?.title,
+          options: doc.data()?.options,
+          usersHaveVoted: doc.data()?.usersHaveVoted,
+          answers: answers,
+        };
+
+        dispatch(ActionTypes.updatePoll(activePoll));
+        setPollIsLoading(false);
+      }
+    } catch (error) {
+      console.log('error: getPoll ', error);
     }
   };
 
   const addPoll = async (poll: IPoll, closure?: () => void | void) => {
     setPollIsLoading(true);
     if (auth.currentUser) {
-      const snapshot = await db.collection('polls').doc('activePoll').get();
+      try {
+        const snapshot = await db.collection('polls').doc('activePoll').get();
 
-      await db.collection('polls').doc('activePoll').set(poll);
+        await db.collection('polls').doc('activePoll').set(poll);
 
-      if (snapshot) {
-        const finishedPoll = snapshot.data() || pollInitialState;
-        await db.collection('finishedPolls').add(finishedPoll);
-      }
+        if (snapshot) {
+          const finishedPoll = snapshot.data() || pollInitialState;
+          await db.collection('finishedPolls').add(finishedPoll);
+        }
 
-      getPoll();
+        getPoll();
 
-      if (closure) {
-        closure();
+        if (closure) {
+          closure();
+        }
+      } catch (error) {
+        console.log('error: addPoll ', error);
       }
     }
   };
 
   const addUserHaveVoted = async () => {
-    await db
-      .collection('polls')
-      .doc('activePoll')
-      .update({
-        usersHaveVoted: firebase.firestore.FieldValue.arrayUnion(
-          auth.currentUser?.uid
-        ),
-      });
+    try {
+      await db
+        .collection('polls')
+        .doc('activePoll')
+        .update({
+          usersHaveVoted: firebase.firestore.FieldValue.arrayUnion(
+            auth.currentUser?.uid
+          ),
+        });
+    } catch (error) {
+      console.log('error: addUsersVoted', error);
+    }
   };
 
-  const addAnswer = async (answer: IOption[], closure?: () => void) => {
-    const snapshot = await db.collection('polls').doc('activePoll').get();
-    let answerList: IAnswers[] = [{ rankingList: [] }];
+  const addAnswer = async (
+    name: string,
+    answer: IOption[],
+    comment: string,
+    date: Date,
+    closure?: () => void
+  ) => {
+    try {
+      const snapshot = await db.collection('polls').doc('activePoll').get();
+      let answerList: IAnswers[] = [];
 
-    const newAnswer: IAnswers = { rankingList: [] };
+      const newAnswer: IAnswers = {
+        name: name,
+        rankingList: [],
+        comment: comment,
+        date: date,
+      };
 
-    if (snapshot) {
-      const firebaseArray: IAnswers[] = snapshot.data()?.answers;
+      if (snapshot) {
+        const firebaseArray: IAnswers[] = snapshot.data()?.answers;
 
-      answer.forEach((ans) => {
-        newAnswer.rankingList.push(ans.title);
-      });
+        answer.forEach((ans) => {
+          newAnswer.rankingList.push(ans.title);
+        });
 
-      firebaseArray.push(newAnswer);
-      answerList = firebaseArray;
+        firebaseArray.push(newAnswer);
+        answerList = firebaseArray;
+      }
+
+      await db
+        .collection('polls')
+        .doc('activePoll')
+        .update({
+          answers: answerList,
+        })
+        .then(() => {
+          addUserHaveVoted();
+          if (closure) {
+            closure();
+          }
+        });
+    } catch (error) {
+      console.log('error: addAnswers ', error);
     }
-    /* 
-    answer.forEach((ans) => {
-      answerStringList.rankingList.push(ans.title);
-    }); */
-
-    await db
-      .collection('polls')
-      .doc('activePoll')
-      .update({
-        answers: answerList,
-      })
-      .then(() => {
-        addUserHaveVoted();
-        if (closure) {
-          closure();
-        }
-      });
   };
 
   return (

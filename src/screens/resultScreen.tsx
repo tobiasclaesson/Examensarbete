@@ -1,5 +1,5 @@
 import React, { FC, useContext, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ListViewComponent } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { AppStackParamList } from '../navigation/appStack';
 import { StackNavigationProp } from '@react-navigation/stack';
 import colors from '../utils/colors';
@@ -8,11 +8,14 @@ import { DBContext } from '../context/dbContext';
 import { ReducerState } from '../store';
 import { useSelector } from 'react-redux';
 import SplashScreen from './splashScreen';
-import { IAnswers, IOption } from '../utils/types';
-import schulze from 'schulze-method';
-import { Button, CandidateResultItem } from '../components';
+import { IComment, IResult } from '../utils/types';
+import { Button, CandidateResultItem, CommentListItem } from '../components';
 import { strings } from '../utils/strings';
 import { ScrollView } from 'react-native-gesture-handler';
+import {
+  bubbleSortCommentsDescendingByDate,
+  runSchulzesMethod,
+} from '../utils/common';
 
 type ResultScreenNavigationProp = StackNavigationProp<
   AppStackParamList,
@@ -33,52 +36,41 @@ const ResultScreen: FC<IProps> = (props: IProps) => {
 
   const [results, setResults] = useState<IResult[]>([]);
 
-  type ConvertAnswerArrayType = Array<number[]>;
-  const convertUserAnswers = (answers: IAnswers[]): ConvertAnswerArrayType => {
-    const convertedAnswerArray: ConvertAnswerArrayType = [];
-    let convertedAnswer: number[] = [];
-
-    answers.forEach((ans) => {
-      poll.options.forEach((opt, j) => {
-        ans.rankingList.forEach((rl, k) => {
-          if (rl === opt.title) {
-            convertedAnswer.push(k);
-          }
-          if (k + 1 === poll.options.length && j + 1 === poll.options.length) {
-            convertedAnswerArray.push(convertedAnswer);
-            convertedAnswer = [];
-          }
-        });
-      });
-    });
-
-    return convertedAnswerArray;
-  };
+  const [comments, setComments] = useState<IComment[]>([]);
 
   useEffect(() => {
     setResults(
-      schulze.run(poll.options.length, convertUserAnswers(poll.answers))
+      runSchulzesMethod(poll)
+      //schulze.run(poll.options.length, convertUserAnswers(poll.answers))
     );
+    getAllComments();
   }, [poll]);
 
   useEffect(() => {
     getPoll();
   }, []);
 
-  //console.log('res: ', results);
+  const getAllComments = () => {
+    const array: IComment[] = [];
+    poll.answers.forEach((answer) => {
+      if (answer.comment && answer.comment !== '') {
+        array.push({
+          author: answer.name,
+          text: answer.comment,
+          date: answer.date,
+        });
+      }
+    });
 
-  interface IResult {
-    indexes: number[];
-    place: number;
-  }
+    setComments(bubbleSortCommentsDescendingByDate(array));
+  };
+
+  //console.log('res: ', results);
 
   if (isLoading) return <SplashScreen />;
   if (pollIsLoading) return <SplashScreen />;
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Result</Text>
-      </View>
       <View style={styles.scrollViewContainer}>
         <ScrollView style={styles.scrollView}>
           {results.map((res) => (
@@ -91,14 +83,25 @@ const ResultScreen: FC<IProps> = (props: IProps) => {
           ))}
         </ScrollView>
       </View>
-      <View style={styles.buttonContainer}>
-        {userIsAdmin && (
+      <View style={styles.commentsContainer}>
+        <ScrollView style={styles.scrollView}>
+          {comments.map((comment) => (
+            <CommentListItem
+              key={comment.author}
+              author={comment.author}
+              text={comment.text}
+            />
+          ))}
+        </ScrollView>
+      </View>
+      {userIsAdmin && (
+        <View style={styles.buttonContainer}>
           <Button
             title={strings.mainScreenCreatePollButton.eng}
             onPress={() => navigation.navigate('CreatePollScreen')}
           />
-        )}
-      </View>
+        </View>
+      )}
     </View>
   );
 };
@@ -112,15 +115,12 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: colors.lightGrey,
   },
-  header: {
-    justifyContent: 'center',
-    flex: 1,
-  },
   headerText: {
     color: colors.black,
     fontSize: 34,
   },
   scrollViewContainer: {
+    paddingVertical: 20,
     width: '90%',
     flex: 8,
     alignItems: 'center',
@@ -129,6 +129,14 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
     width: '100%',
+  },
+  commentsContainer: {
+    flex: 6,
+
+    width: '90%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 20,
   },
   buttonContainer: {
     paddingVertical: 10,

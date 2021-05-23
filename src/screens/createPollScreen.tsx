@@ -1,5 +1,12 @@
-import React, { FC, useContext, useState } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
+import React, { FC, useContext, useRef, useState } from 'react';
+import {
+  View,
+  StyleSheet,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
+} from 'react-native';
 import { AppStackParamList } from '../navigation/appStack';
 import { StackNavigationProp } from '@react-navigation/stack';
 import colors from '../utils/colors';
@@ -7,7 +14,11 @@ import colors from '../utils/colors';
 import { Button, PollListItem, TextInputField } from '../components';
 import { DBContext } from '../context/dbContext';
 import { IOption, IPoll } from '../utils/types';
-import { ScrollView } from 'react-native-gesture-handler';
+import {
+  ScrollView,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from 'react-native-gesture-handler';
 import { updatePoll } from '../store/actions';
 import { checkArrayForDuplicates } from '../utils/common';
 import { strings } from '../utils/strings';
@@ -25,6 +36,7 @@ const MainScreen: FC<IProps> = (props: IProps) => {
   const { navigation } = props;
 
   const { addPoll } = useContext(DBContext);
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const [title, setTitle] = useState<string>('');
   const [options, setOptions] = useState<IOption[]>([]);
@@ -98,36 +110,65 @@ const MainScreen: FC<IProps> = (props: IProps) => {
     );
   };
 
+  const removeItem = (i: number) => {
+    const array = options.filter((item, index) => {
+      console.log(i, index);
+      return i !== index;
+    });
+    setOptions(array);
+  };
+
   return (
-    <View style={styles.container}>
-      <TextInputField
-        placeholder='title'
-        value={title}
-        onChangeText={(text) => setTitle(text)}
-      />
-      <View style={styles.scrollViewContainer}>
-        <ScrollView style={styles.scrollView}>
-          {options.map((option, i) => (
-            <PollListItem
-              key={i}
-              title={option.title}
-              onChangeText={(text) => setOption(text, i)}
-              isText={false}
+    <TouchableWithoutFeedback
+      style={{ height: '100%' }}
+      onPress={Keyboard.dismiss}
+    >
+      <View style={styles.container}>
+        <View style={styles.titleInputContainer}>
+          <TextInputField
+            placeholder='title'
+            value={title}
+            onChangeText={(text) => setTitle(text)}
+          />
+        </View>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={120}
+          style={{ flex: 9, alignItems: 'center', width: '100%' }}
+        >
+          <View style={styles.scrollViewContainer}>
+            <ScrollView
+              ref={scrollViewRef}
+              onContentSizeChange={() => scrollViewRef.current!.scrollToEnd()}
+              onLayout={() => scrollViewRef.current!.scrollToEnd()}
+              style={styles.scrollView}
+            >
+              {options.map((option, i) => (
+                <PollListItem
+                  key={i}
+                  title={option.title}
+                  onChangeText={(text) => setOption(text, i)}
+                  isText={false}
+                  i={i}
+                  removeItem={removeItem}
+                  removable
+                />
+              ))}
+            </ScrollView>
+          </View>
+          <View style={styles.buttonsContainer}>
+            <Button
+              title={strings.createPollScreenAddOptionButton.eng}
+              onPress={() => addOption()}
             />
-          ))}
-        </ScrollView>
+            <Button
+              title={strings.createPollScreenUpdatePollButton.eng}
+              onPress={() => updatePoll()}
+            />
+          </View>
+        </KeyboardAvoidingView>
       </View>
-      <View style={styles.buttonsContainer}>
-        <Button
-          title={strings.createPollScreenAddOptionButton.eng}
-          onPress={() => addOption()}
-        />
-        <Button
-          title={strings.createPollScreenUpdatePollButton.eng}
-          onPress={() => updatePoll()}
-        />
-      </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -136,14 +177,21 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     paddingVertical: 10,
-    height: '100%',
+    //height: '100%',
+    flex: 1,
+    width: '100%',
     backgroundColor: colors.lightGrey,
+  },
+  titleInputContainer: {
+    width: '90%',
+    flex: 1,
   },
   scrollViewContainer: {
     paddingTop: 10,
 
     width: '90%',
-    height: '65%',
+    //height: '80%',
+    flex: 7,
   },
   scrollView: {
     flex: 1,
@@ -151,7 +199,7 @@ const styles = StyleSheet.create({
   buttonsContainer: {
     paddingVertical: 10,
     width: '90%',
-    flex: 1,
+    flex: 2,
     paddingBottom: 30,
   },
 });

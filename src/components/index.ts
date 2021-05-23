@@ -4,6 +4,7 @@ import SignOutButton from './signOutButton';
 import PollListItem from './pollListItem';
 //import DraggablePollListItem from './draggablePollListItem';
 import CandidateResultItem from './candidateResultItem';
+import CommentListItem from './commentListItem';
 
 export {
   TextInputField,
@@ -12,4 +13,5 @@ export {
   PollListItem,
   //DraggablePollListItem,
   CandidateResultItem,
+  CommentListItem,
 };

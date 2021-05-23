@@ -32,6 +32,7 @@ const TextInputField: FC<IProps> = (props: IProps) => {
         keyboardType={keyboardType || 'default'}
         autoCompleteType='off'
         autoCorrect={false}
+        autoCapitalize='none'
         autoFocus={shouldAutoFocus || false}
       />
     </View>
@@ -40,13 +41,13 @@ const TextInputField: FC<IProps> = (props: IProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: '90%',
+    width: '100%',
     alignSelf: 'center',
     backgroundColor: colors.textInputBackground,
     borderRadius: 5,
     marginVertical: 5,
   },
-  textInput: { padding: 15 },
+  textInput: { padding: 15, minHeight: 45 },
 });
 
 export default TextInputField;

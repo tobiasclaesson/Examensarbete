@@ -9,12 +9,8 @@ const MainNavigation: FC = () => {
   const { user, isLoading } = useContext(AuthContext);
 
   if (isLoading) {
-    console.log('isloading, returning splash');
-
     return <SplashScreen />;
   }
-
-  console.log('is nog loading, returning app');
 
   return (
     <NavigationContainer>

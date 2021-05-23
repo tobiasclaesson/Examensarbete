@@ -1,15 +1,26 @@
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
+} from 'react-native';
 import { AppStackParamList } from '../navigation/appStack';
 import { StackNavigationProp } from '@react-navigation/stack';
 import colors from '../utils/colors';
 import { AuthContext } from '../context/authContext';
-import { Button, PollListItem } from '../components';
+import { Button, PollListItem, TextInputField } from '../components';
 import SplashScreen from './splashScreen';
 import { DBContext } from '../context/dbContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { ReducerState } from '../store';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import {
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from 'react-native-gesture-handler';
 import { strings } from '../utils/strings';
 import DraggableFlatList, {
   RenderItemParams,
@@ -35,6 +46,7 @@ const MainScreen: FC<IProps> = (props: IProps) => {
 
   const { poll } = useSelector((state: ReducerState) => state.pollReducer);
 
+  const [comment, setComment] = useState<string>('');
   const [usersOptionOrder, setUsersOptionsOrder] = useState<IOption[]>(
     poll.options
   );
@@ -50,18 +62,6 @@ const MainScreen: FC<IProps> = (props: IProps) => {
   useEffect(() => {
     getPoll();
   }, []);
-
-  /* function listToObject(list: any) {
-    const values = Object.values(list);
-    const object = {};
-
-    for (let i = 0; i < values.length; i++) {
-      object[values[i].id] = i;
-    }
-    console.log(object);
-
-    return object;
-  } */
 
   type Item = {
     title: string;
@@ -89,47 +89,76 @@ const MainScreen: FC<IProps> = (props: IProps) => {
     return userHaveVoted;
   };
 
+  const submitAlert = () => {
+    Alert.alert(
+      'Submit',
+      'Please note that you will not be able to edit your answers after clicking on submit',
+      [
+        { text: 'Cancel' },
+        {
+          text: 'Submit',
+          onPress: () =>
+            addAnswer(
+              user?.email || '',
+              usersOptionOrder,
+              comment,
+              new Date(),
+              () => navigation.navigate('ResultScreen')
+            ),
+        },
+      ]
+    );
+  };
+
   if (isLoading) return <SplashScreen />;
   if (pollIsLoading) return <SplashScreen />;
-  // if (userHaveVoted()) return <ResultScreen />;
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>{poll.title}</Text>
-      </View>
+    <TouchableWithoutFeedback
+      style={{ height: '100%' }}
+      onPress={Keyboard.dismiss}
+    >
+      <View style={styles.container}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={120}
+          style={{ flex: 24, alignItems: 'center', width: '100%' }}
+        >
+          <View style={styles.scrollViewContainer}>
+            <Text style={styles.descText}>
+              {strings.mainScreenUnorderedListDesc.eng}
+            </Text>
+            <DraggableFlatList
+              style={styles.scrollView}
+              data={usersOptionOrder}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.title}
+              onDragEnd={({ data }) =>
+                dispatch(Actions.updatePoll({ ...poll, options: data }))
+              }
+            />
+            <TextInputField
+              placeholder='comment'
+              value={comment}
+              onChangeText={(text) => setComment(text)}
+            />
+          </View>
 
-      <View style={styles.scrollViewContainer}>
-        <Text style={styles.descText}>
-          {strings.mainScreenUnorderedListDesc.eng}
-        </Text>
-        <DraggableFlatList
-          data={usersOptionOrder}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.title}
-          onDragEnd={({ data }) =>
-            dispatch(Actions.updatePoll({ ...poll, options: data }))
-          }
-        />
-      </View>
+          <View style={styles.buttonContainer}>
+            {userIsAdmin && (
+              <Button
+                title={strings.mainScreenCreatePollButton.eng}
+                onPress={() => navigation.navigate('CreatePollScreen')}
+              />
+            )}
 
-      <View style={styles.buttonContainer}>
-        {userIsAdmin && (
-          <Button
-            title={strings.mainScreenCreatePollButton.eng}
-            onPress={() => navigation.navigate('CreatePollScreen')}
-          />
-        )}
-
-        <Button
-          title={strings.mainScreenSubmitButton.eng}
-          onPress={() =>
-            addAnswer(usersOptionOrder, () =>
-              navigation.navigate('ResultScreen')
-            )
-          }
-        />
+            <Button
+              title={strings.mainScreenSubmitButton.eng}
+              onPress={() => submitAlert()}
+            />
+          </View>
+        </KeyboardAvoidingView>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -145,7 +174,7 @@ const styles = StyleSheet.create({
   header: {
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 1,
+    flex: 2,
   },
   headerText: {
     color: colors.black,
@@ -156,19 +185,22 @@ const styles = StyleSheet.create({
     fontSize: 18,
     alignSelf: 'center',
     overflow: 'visible',
+    paddingVertical: 5,
+    paddingTop: 10,
   },
   scrollViewContainer: {
     paddingTop: 10,
     width: '90%',
-    flex: 6,
+    flex: 18,
   },
   scrollView: {
     flex: 1,
+    marginBottom: 10,
   },
   buttonContainer: {
     paddingVertical: 10,
-    width: '80%',
-    flex: 2,
+    width: '90%',
+    flex: 6,
     paddingBottom: 30,
   },
 });

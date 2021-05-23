@@ -3,6 +3,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { MainScreen, CreatePollScreen, ResultScreen } from '../screens';
 import colors from '../utils/colors';
 import SignOutButton from '../components/signOutButton';
+import { useSelector } from 'react-redux';
+import { ReducerState } from '../store';
 
 export type AppStackParamList = {
   MainScreen: undefined;
@@ -21,13 +23,15 @@ const screenOptions = {
 };
 
 const AppStack: FC = () => {
+  const { poll } = useSelector((state: ReducerState) => state.pollReducer);
+
   return (
     <Stack.Navigator screenOptions={screenOptions}>
       <Stack.Screen
         name='MainScreen'
         component={MainScreen}
         options={{
-          title: 'StSo Prio',
+          title: poll.title || 'StSo Prio',
 
           headerLeft: (props) => <SignOutButton {...props} />,
         }}
