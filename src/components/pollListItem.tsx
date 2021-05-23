@@ -2,7 +2,6 @@ import React, { FC } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import colors from '../utils/colors';
-import { POLL_LIST_ITEM_HEIGHT } from '../utils/constants';
 import { Ionicons } from '@expo/vector-icons';
 
 interface IProps {

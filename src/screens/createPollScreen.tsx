@@ -13,13 +13,11 @@ import colors from '../utils/colors';
 
 import { Button, PollListItem, TextInputField } from '../components';
 import { DBContext } from '../context/dbContext';
-import { IOption, IPoll } from '../utils/types';
+import { IOption } from '../utils/types';
 import {
   ScrollView,
-  TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native-gesture-handler';
-import { updatePoll } from '../store/actions';
 import { checkArrayForDuplicates } from '../utils/common';
 import { strings } from '../utils/strings';
 
@@ -177,7 +175,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     paddingVertical: 10,
-    //height: '100%',
     flex: 1,
     width: '100%',
     backgroundColor: colors.lightGrey,
@@ -188,9 +185,7 @@ const styles = StyleSheet.create({
   },
   scrollViewContainer: {
     paddingTop: 10,
-
     width: '90%',
-    //height: '80%',
     flex: 7,
   },
   scrollView: {

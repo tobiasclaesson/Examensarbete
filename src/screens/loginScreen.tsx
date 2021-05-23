@@ -65,12 +65,7 @@ const LoginScreen: FC<IProps> = (props: IProps) => {
               }}
             />
           </View>
-          <Button
-            title='LOGIN TEST USER'
-            onPress={() => signIn('t@c.com', '123456')}
-          />
         </KeyboardAvoidingView>
-        {/* FOR TESTING */}
       </View>
     </TouchableWithoutFeedback>
   );

@@ -4,6 +4,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { StackHeaderLeftButtonProps } from '@react-navigation/stack';
 import { AuthContext } from '../context/authContext';
 import colors from '../utils/colors';
+import { strings } from '../utils/strings';
 
 const SignOutButton: FC<StackHeaderLeftButtonProps> = () => {
   const { signOut } = useContext(AuthContext);
@@ -13,7 +14,7 @@ const SignOutButton: FC<StackHeaderLeftButtonProps> = () => {
       onPress={() => signOut()}
       containerStyle={styles.container}
     >
-      <Text style={styles.text}>Sign Out</Text>
+      <Text style={styles.text}>{strings.signOutBtnText.eng}</Text>
     </TouchableOpacity>
   );
 };
