@@ -27,6 +27,7 @@ const initialState = {
     name: string,
     answer: IOption[],
     comment: string,
+    date: Date,
     closure?: (() => void) | undefined
     // eslint-disable-next-line @typescript-eslint/no-empty-function
   ) => {},
@@ -45,11 +46,26 @@ const DBContextProvider: FC = (props: PropTypes) => {
     if (auth.currentUser) {
       const pollSubscriber = db.collection('polls').onSnapshot(
         (querySnapshot) => {
-          querySnapshot.forEach((documentSnapshot) => {
-            if (documentSnapshot.id === 'activePoll') {
-              dispatch(
-                ActionTypes.updatePoll(documentSnapshot.data() as IPoll)
-              );
+          querySnapshot.forEach((doc) => {
+            if (doc.id === 'activePoll') {
+              const ans = doc.data()?.answers;
+              const answers: IAnswers[] = [];
+
+              ans.forEach((a: any) => {
+                if (a.date) {
+                  answers.push({ ...a, date: a.date.toDate() });
+                }
+              });
+
+              const activePoll = {
+                id: doc.id,
+                title: doc.data()?.title,
+                options: doc.data()?.options,
+                usersHaveVoted: doc.data()?.usersHaveVoted,
+                answers: answers,
+              };
+
+              dispatch(ActionTypes.updatePoll(activePoll));
             }
           });
         },
@@ -69,12 +85,21 @@ const DBContextProvider: FC = (props: PropTypes) => {
       const doc = await db.collection('polls').doc('activePoll').get();
 
       if (doc) {
+        const ans = doc.data()?.answers;
+        const answers: IAnswers[] = [];
+
+        ans.forEach((a: any) => {
+          if (a.date) {
+            answers.push({ ...a, date: a.date.toDate() });
+          }
+        });
+
         const activePoll = {
           id: doc.id,
           title: doc.data()?.title,
           options: doc.data()?.options,
           usersHaveVoted: doc.data()?.usersHaveVoted,
-          answers: doc.data()?.answers,
+          answers: answers,
         };
 
         dispatch(ActionTypes.updatePoll(activePoll));
@@ -86,8 +111,6 @@ const DBContextProvider: FC = (props: PropTypes) => {
   };
 
   const addPoll = async (poll: IPoll, closure?: () => void | void) => {
-    console.log('in add poll: ', auth.currentUser);
-
     setPollIsLoading(true);
     if (auth.currentUser) {
       try {
@@ -130,6 +153,7 @@ const DBContextProvider: FC = (props: PropTypes) => {
     name: string,
     answer: IOption[],
     comment: string,
+    date: Date,
     closure?: () => void
   ) => {
     try {
@@ -140,6 +164,7 @@ const DBContextProvider: FC = (props: PropTypes) => {
         name: name,
         rankingList: [],
         comment: comment,
+        date: date,
       };
 
       if (snapshot) {
