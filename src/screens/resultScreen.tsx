@@ -1,5 +1,5 @@
 import React, { FC, useContext, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ListViewComponent } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { AppStackParamList } from '../navigation/appStack';
 import { StackNavigationProp } from '@react-navigation/stack';
 import colors from '../utils/colors';
@@ -8,11 +8,14 @@ import { DBContext } from '../context/dbContext';
 import { ReducerState } from '../store';
 import { useSelector } from 'react-redux';
 import SplashScreen from './splashScreen';
-import { IAnswers, IOption } from '../utils/types';
-import schulze from 'schulze-method';
+import { IComment, IResult } from '../utils/types';
 import { Button, CandidateResultItem, CommentListItem } from '../components';
 import { strings } from '../utils/strings';
 import { ScrollView } from 'react-native-gesture-handler';
+import {
+  bubbleSortCommentsDescendingByDate,
+  runSchulzesMethod,
+} from '../utils/common';
 
 type ResultScreenNavigationProp = StackNavigationProp<
   AppStackParamList,
@@ -33,37 +36,12 @@ const ResultScreen: FC<IProps> = (props: IProps) => {
 
   const [results, setResults] = useState<IResult[]>([]);
 
-  interface IComment {
-    author: string;
-    text: string;
-  }
   const [comments, setComments] = useState<IComment[]>([]);
-
-  type ConvertAnswerArrayType = Array<number[]>;
-  const convertUserAnswers = (answers: IAnswers[]): ConvertAnswerArrayType => {
-    const convertedAnswerArray: ConvertAnswerArrayType = [];
-    let convertedAnswer: number[] = [];
-
-    answers.forEach((ans) => {
-      poll.options.forEach((opt, j) => {
-        ans.rankingList.forEach((rl, k) => {
-          if (rl === opt.title) {
-            convertedAnswer.push(k);
-          }
-          if (k + 1 === poll.options.length && j + 1 === poll.options.length) {
-            convertedAnswerArray.push(convertedAnswer);
-            convertedAnswer = [];
-          }
-        });
-      });
-    });
-
-    return convertedAnswerArray;
-  };
 
   useEffect(() => {
     setResults(
-      schulze.run(poll.options.length, convertUserAnswers(poll.answers))
+      runSchulzesMethod(poll)
+      //schulze.run(poll.options.length, convertUserAnswers(poll.answers))
     );
     getAllComments();
   }, [poll]);
@@ -76,18 +54,18 @@ const ResultScreen: FC<IProps> = (props: IProps) => {
     const array: IComment[] = [];
     poll.answers.forEach((answer) => {
       if (answer.comment && answer.comment !== '') {
-        array.push({ author: answer.name, text: answer.comment });
+        array.push({
+          author: answer.name,
+          text: answer.comment,
+          date: answer.date,
+        });
       }
     });
-    setComments(array);
+
+    setComments(bubbleSortCommentsDescendingByDate(array));
   };
 
   //console.log('res: ', results);
-
-  interface IResult {
-    indexes: number[];
-    place: number;
-  }
 
   if (isLoading) return <SplashScreen />;
   if (pollIsLoading) return <SplashScreen />;
