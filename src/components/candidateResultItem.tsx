@@ -12,8 +12,6 @@ interface IProps {
 const CandidateResultItem: FC<IProps> = (props: IProps) => {
   const { indexes, place, options } = props;
 
-  console.log(indexes);
-
   return (
     <View style={styles.container}>
       <Text style={styles.text}>{place}.</Text>
