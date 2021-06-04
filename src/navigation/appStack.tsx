@@ -20,6 +20,7 @@ const screenOptions = {
     backgroundColor: colors.brandBlue,
   },
   headerBackTitle: 'Back',
+  gestureEnabled: false,
 };
 
 const AppStack: FC = () => {
