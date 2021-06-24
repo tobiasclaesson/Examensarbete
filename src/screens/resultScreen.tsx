@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     fontSize: 34,
   },
   scrollViewContainer: {
-    paddingVertical: 20,
+    paddingVertical: 10,
     width: '90%',
     flex: 8,
     alignItems: 'center',
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     width: '90%',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 20,
+    paddingVertical: 5,
   },
   buttonContainer: {
     paddingVertical: 10,

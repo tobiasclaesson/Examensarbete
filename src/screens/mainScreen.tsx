@@ -202,6 +202,7 @@ const styles = StyleSheet.create({
     width: '90%',
     flex: 6,
     paddingBottom: 30,
+    justifyContent: 'center',
   },
 });
 
