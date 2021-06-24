@@ -22,7 +22,7 @@ const SignOutButton: FC<StackHeaderLeftButtonProps> = () => {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    left: 20,
+    right: 20,
     padding: 5,
   },
   text: {

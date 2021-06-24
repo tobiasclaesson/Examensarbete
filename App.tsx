@@ -10,6 +10,7 @@ export const store = createStore(allReducers);
 
 import { LogBox } from 'react-native';
 LogBox.ignoreLogs(['Calling getNode()']);
+LogBox.ignoreLogs(['Setting a timer']);
 
 export default function App(): React.ReactNode {
   return (

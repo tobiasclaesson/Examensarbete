@@ -19,7 +19,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightGrey,
   },
   title: {
-    fontFamily: 'Verdana',
     fontSize: 24,
     padding: 50,
   },
