@@ -1,6 +1,7 @@
 import { IAnswers, IOption, IPoll, IResult, IComment } from './types';
 
 import schulze from 'schulze-method';
+import firebase from 'firebase';
 
 export function checkArrayForDuplicates(arr: IOption[]): boolean {
   const array: string[] = [];
@@ -56,3 +57,18 @@ export function bubbleSortCommentsDescendingByDate(
   } while (swap);
   return x;
 }
+
+export const userHaveVoted = (
+  poll: IPoll,
+  user: firebase.User | null
+): boolean => {
+  const userID = user?.uid;
+  let userHaveVoted = false;
+
+  poll.usersHaveVoted.forEach((id) => {
+    if (userID === id) {
+      userHaveVoted = true;
+    }
+  });
+  return userHaveVoted;
+};

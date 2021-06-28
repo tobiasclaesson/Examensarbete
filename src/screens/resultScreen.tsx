@@ -15,6 +15,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import {
   bubbleSortCommentsDescendingByDate,
   runSchulzesMethod,
+  userHaveVoted,
 } from '../utils/common';
 
 type ResultScreenNavigationProp = StackNavigationProp<
@@ -29,7 +30,7 @@ interface IProps {
 const ResultScreen: FC<IProps> = (props: IProps) => {
   const { navigation } = props;
 
-  const { userIsAdmin, isLoading } = useContext(AuthContext);
+  const { user, userIsAdmin, isLoading } = useContext(AuthContext);
   const { getPoll, pollIsLoading } = useContext(DBContext);
 
   const { poll } = useSelector((state: ReducerState) => state.pollReducer);
@@ -37,6 +38,10 @@ const ResultScreen: FC<IProps> = (props: IProps) => {
   const [results, setResults] = useState<IResult[]>([]);
 
   const [comments, setComments] = useState<IComment[]>([]);
+
+  useEffect(() => {
+    if (!userHaveVoted(poll, user)) navigation.navigate('MainScreen');
+  });
 
   useEffect(() => {
     setResults(runSchulzesMethod(poll));

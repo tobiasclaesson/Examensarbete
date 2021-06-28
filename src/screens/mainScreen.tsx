@@ -27,6 +27,7 @@ import DraggableFlatList, {
 } from 'react-native-draggable-flatlist';
 import { IOption } from '../utils/types';
 import * as Actions from '../store/actions';
+import { userHaveVoted } from '../utils/common';
 
 type MainScreenNavigationProp = StackNavigationProp<
   AppStackParamList,
@@ -52,7 +53,7 @@ const MainScreen: FC<IProps> = (props: IProps) => {
   );
 
   useEffect(() => {
-    if (userHaveVoted()) navigation.navigate('ResultScreen');
+    if (userHaveVoted(poll, user)) navigation.navigate('ResultScreen');
   });
 
   useEffect(() => {
@@ -77,7 +78,7 @@ const MainScreen: FC<IProps> = (props: IProps) => {
     []
   );
 
-  const userHaveVoted = (): boolean => {
+  /* const userHaveVoted = (): boolean => {
     const userID = user?.uid;
     let userHaveVoted = false;
 
@@ -87,7 +88,7 @@ const MainScreen: FC<IProps> = (props: IProps) => {
       }
     });
     return userHaveVoted;
-  };
+  }; */
 
   const submitAlert = () => {
     Alert.alert(
