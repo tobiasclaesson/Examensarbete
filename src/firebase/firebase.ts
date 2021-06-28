@@ -10,6 +10,7 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+firebase.firestore().settings({ experimentalForceLongPolling: true });
 
 export const auth = firebase.auth();
 
