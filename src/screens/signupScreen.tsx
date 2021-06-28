@@ -5,6 +5,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../navigation/authStack';
@@ -26,7 +27,16 @@ interface IProps {
 const SignupScreen: FC<IProps> = (props) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordRepetition, setPasswordRepetition] = useState('');
   const { signUp } = useContext(AuthContext);
+
+  const signUpUser = () => {
+    if (password === passwordRepetition) {
+      signUp(email, password);
+    } else {
+      Alert.alert('Error', 'Passwords are not matching!', [{ text: 'OK' }]);
+    }
+  };
 
   return (
     <TouchableWithoutFeedback
@@ -44,11 +54,18 @@ const SignupScreen: FC<IProps> = (props) => {
               placeholder='Email'
               value={email}
               onChangeText={(text) => setEmail(text)}
+              keyboardType={'email-address'}
             />
             <TextInputField
               placeholder='Password'
               value={password}
               onChangeText={(text) => setPassword(text)}
+              secureTextEntry={true}
+            />
+            <TextInputField
+              placeholder='Repeat Password'
+              value={passwordRepetition}
+              onChangeText={(text) => setPasswordRepetition(text)}
               secureTextEntry={true}
             />
           </View>
@@ -60,7 +77,7 @@ const SignupScreen: FC<IProps> = (props) => {
             <Button
               title={strings.signupScreenSignUpButton.eng}
               onPress={() => {
-                signUp(email, password);
+                signUpUser();
               }}
             />
           </View>
