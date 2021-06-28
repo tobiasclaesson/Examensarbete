@@ -40,7 +40,7 @@ const PollListItem: FC<IProps> = (props: IProps) => {
             autoCorrect={false}
             autoFocus={true}
             maxLength={200}
-            numberOfLines={5}
+            //numberOfLines={5}
           />
           {removable && (
             <TouchableOpacity
