@@ -104,7 +104,7 @@ const MainScreen: FC<IProps> = (props: IProps) => {
 
     addPoll(
       { title: title, options: options, usersHaveVoted: [], answers: [] },
-      () => navigation.goBack()
+      () => navigation.navigate('MainScreen')
     );
   };
 
