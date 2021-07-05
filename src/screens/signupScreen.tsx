@@ -40,7 +40,7 @@ const SignupScreen: FC<IProps> = (props) => {
 
   return (
     <TouchableWithoutFeedback
-      style={{ height: '100%' }}
+      style={{ height: Platform.OS === 'web' ? '93vh' : '100%' }}
       onPress={Platform.OS === 'web' ? () => null : Keyboard.dismiss}
     >
       <View style={styles.container}>
@@ -96,10 +96,12 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: '90%',
+    maxWidth: 800,
   },
   buttonContainer: {
     flexDirection: 'row',
     width: '90%',
+    maxWidth: 800,
     justifyContent: 'space-between',
   },
 });
