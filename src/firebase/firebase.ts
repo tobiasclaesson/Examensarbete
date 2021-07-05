@@ -1,12 +1,12 @@
 import firebase from 'firebase';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyAKyuRY2pBXn0BoIlkH5EV2t_Oe6F28d7A',
-  authDomain: 'prioritization-app.firebaseapp.com',
-  projectId: 'prioritization-app',
-  storageBucket: 'prioritization-app.appspot.com',
-  messagingSenderId: '376121967400',
-  appId: '1:376121967400:web:74070126c24282d576061d',
+  apiKey: 'AIzaSyDvi85c9Skk3SRmdJzk1NSF9ExbW7SPwb8',
+  authDomain: 'prioritization-app-ace78.firebaseapp.com',
+  projectId: 'prioritization-app-ace78',
+  storageBucket: 'prioritization-app-ace78.appspot.com',
+  messagingSenderId: '197053760890',
+  appId: '1:197053760890:web:6c10c27fb09a7cddedc2c3',
 };
 
 firebase.initializeApp(firebaseConfig);
