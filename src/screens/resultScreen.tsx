@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
   scrollViewContainer: {
     paddingVertical: 10,
     width: '90%',
+    maxWidth: 800,
     flex: 8,
     alignItems: 'center',
     justifyContent: 'center',
@@ -132,15 +133,16 @@ const styles = StyleSheet.create({
   },
   commentsContainer: {
     flex: 6,
-
     width: '90%',
+    maxWidth: 800,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 5,
   },
   buttonContainer: {
     paddingVertical: 10,
-    width: '80%',
+    width: '90%',
+    maxWidth: 800,
     flex: 2,
     paddingBottom: 30,
   },

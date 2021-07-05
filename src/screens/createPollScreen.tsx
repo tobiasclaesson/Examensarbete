@@ -118,8 +118,8 @@ const MainScreen: FC<IProps> = (props: IProps) => {
 
   return (
     <TouchableWithoutFeedback
-      style={{ height: '100%' }}
-      onPress={Keyboard.dismiss}
+      style={{ height: Platform.OS === 'web' ? '93vh' : '100%' }}
+      onPress={Platform.OS === 'web' ? () => null : Keyboard.dismiss}
     >
       <View style={styles.container}>
         <View style={styles.titleInputContainer}>
@@ -181,11 +181,13 @@ const styles = StyleSheet.create({
   },
   titleInputContainer: {
     width: '90%',
+    maxWidth: 800,
     flex: 1,
   },
   scrollViewContainer: {
     paddingTop: 10,
     width: '90%',
+    maxWidth: 800,
     flex: 7,
   },
   scrollView: {
@@ -194,6 +196,7 @@ const styles = StyleSheet.create({
   buttonsContainer: {
     paddingVertical: 10,
     width: '90%',
+    maxWidth: 800,
     flex: 2,
     paddingBottom: 30,
   },

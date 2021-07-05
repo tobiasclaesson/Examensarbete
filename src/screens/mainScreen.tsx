@@ -91,32 +91,38 @@ const MainScreen: FC<IProps> = (props: IProps) => {
   }; */
 
   const submitAlert = () => {
-    Alert.alert(
-      'Submit',
-      'Please note that you will not be able to edit your answers after clicking on submit',
-      [
-        { text: 'Cancel' },
-        {
-          text: 'Submit',
-          onPress: () =>
-            addAnswer(
-              user?.email || '',
-              usersOptionOrder,
-              comment,
-              new Date(),
-              () => navigation.navigate('ResultScreen')
-            ),
-        },
-      ]
-    );
+    if (Platform.OS !== 'web') {
+      Alert.alert(
+        'Submit',
+        'Please note that you will not be able to edit your answers after clicking on submit',
+        [
+          { text: 'Cancel' },
+          {
+            text: 'Submit',
+            onPress: () =>
+              addAnswer(
+                user?.email || '',
+                usersOptionOrder,
+                comment,
+                new Date(),
+                () => navigation.navigate('ResultScreen')
+              ),
+          },
+        ]
+      );
+    } else {
+      addAnswer(user?.email || '', usersOptionOrder, comment, new Date(), () =>
+        navigation.navigate('ResultScreen')
+      );
+    }
   };
 
   if (isLoading) return <SplashScreen />;
   if (pollIsLoading) return <SplashScreen />;
   return (
     <TouchableWithoutFeedback
-      style={{ height: '100%' }}
-      onPress={Keyboard.dismiss}
+      style={{ height: Platform.OS === 'web' ? '93vh' : '100%' }}
+      onPress={Platform.OS === 'web' ? () => null : Keyboard.dismiss}
     >
       <View style={styles.container}>
         <KeyboardAvoidingView
@@ -192,6 +198,7 @@ const styles = StyleSheet.create({
   scrollViewContainer: {
     paddingTop: 10,
     width: '90%',
+    maxWidth: 800,
     flex: 18,
   },
   scrollView: {
@@ -201,9 +208,11 @@ const styles = StyleSheet.create({
   buttonContainer: {
     paddingVertical: 10,
     width: '90%',
+    maxWidth: 800,
     flex: 6,
     paddingBottom: 30,
     justifyContent: 'center',
+    //alignItems: 'center',
   },
 });
 

@@ -41,7 +41,7 @@ const SignupScreen: FC<IProps> = (props) => {
   return (
     <TouchableWithoutFeedback
       style={{ height: '100%' }}
-      onPress={Keyboard.dismiss}
+      onPress={Platform.OS === 'web' ? () => null : Keyboard.dismiss}
     >
       <View style={styles.container}>
         <KeyboardAvoidingView

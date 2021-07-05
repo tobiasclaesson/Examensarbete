@@ -8,16 +8,23 @@ import allReducers from './src/store';
 
 export const store = createStore(allReducers);
 
-import { LogBox } from 'react-native';
-LogBox.ignoreLogs(['Calling getNode()']);
-LogBox.ignoreLogs(['Setting a timer']);
+import { Dimensions, LogBox, Platform, View } from 'react-native';
+Platform.OS !== 'web' && LogBox.ignoreLogs(['Calling getNode()']);
+Platform.OS !== 'web' && LogBox.ignoreLogs(['Setting a timer']);
 
 export default function App(): React.ReactNode {
   return (
     <Provider store={store}>
       <AuthContextProvider>
         <DBContextProvider>
-          <MainNavigation />
+          <View
+            style={{
+              height: Dimensions.get('window').height,
+              width: Dimensions.get('window').width,
+            }}
+          >
+            <MainNavigation />
+          </View>
         </DBContextProvider>
       </AuthContextProvider>
     </Provider>
